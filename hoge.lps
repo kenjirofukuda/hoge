@@ -7,9 +7,8 @@
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos Y="4"/>
+        <CursorPos X="41" Y="11"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -20,6 +19,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UHoge"/>
+        <IsVisibleTab Value="True"/>
         <CursorPos X="11"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>

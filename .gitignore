@@ -3,3 +3,4 @@ lib/
 hoge
 hoge.exe
 hoge.app/
+*.bak
