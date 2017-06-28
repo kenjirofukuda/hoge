@@ -1,9 +1,13 @@
 object Form1: TForm1
-  Left = 491
+  Left = 536
   Height = 480
-  Top = 230
+  Top = 271
   Width = 680
   Caption = 'Hoge'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnMouseUp = FormMouseUp
+  OnPaint = FormPaint
   Position = poScreenCenter
   LCLVersion = '1.6.4.0'
 end
