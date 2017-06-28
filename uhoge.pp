@@ -37,6 +37,7 @@ implementation
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   FDocument := TDocument.Create;
+  FDocument.LoadFromDefault;
 end;
 
 
