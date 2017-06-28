@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  LazFileUtils, UDocument;
+  UDocument;
 
 type
   { TForm1 }
@@ -15,7 +15,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer);
+                          Shift: TShiftState; X, Y: integer);
     procedure FormPaint(Sender: TObject);
   private
     FDocument: TDocument;
@@ -25,15 +25,12 @@ type
   end;
 
 
-
 var
   Form1: TForm1;
 
 implementation
 
 {$R *.lfm}
-
-
 
 { TForm1 }
 
