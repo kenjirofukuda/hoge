@@ -32,7 +32,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -45,6 +45,10 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UHoge"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="README.md"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

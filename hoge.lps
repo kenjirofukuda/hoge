@@ -3,11 +3,11 @@
   <ProjectSession>
     <Version Value="10"/>
     <BuildModes Active="Default"/>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <CursorPos X="36" Y="11"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
@@ -27,7 +27,7 @@
       </Unit1>
       <Unit2>
         <Filename Value="/usr/local/share/fpcsrc/rtl/objpas/classes/classesh.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="11"/>
         <CursorPos X="4" Y="27"/>
         <UsageCount Value="10"/>
@@ -44,15 +44,24 @@
       </Unit3>
       <Unit4>
         <Filename Value="/Developer/lazarus/lcl/include/wincontrol.inc"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="4514"/>
         <CursorPos X="3" Y="4394"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="README.md"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="17" Y="3"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit5>
     </Units>
-    <JumpHistory Count="17" HistoryIndex="16">
+    <JumpHistory Count="18" HistoryIndex="17">
       <Position1>
         <Filename Value="hoge.lpr"/>
       </Position1>
@@ -120,6 +129,10 @@
         <Filename Value="uhoge.pp"/>
         <Caret Line="53" Column="20" TopLine="29"/>
       </Position17>
+      <Position18>
+        <Filename Value="README.md"/>
+        <Caret Line="3"/>
+      </Position18>
     </JumpHistory>
   </ProjectSession>
 </CONFIG>
