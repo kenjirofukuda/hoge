@@ -6,10 +6,9 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  fgl;
+  LazFileUtils, UDocument;
 
 type
-  TPoints = specialize TFPGList<TPoint>;
   { TForm1 }
 
   TForm1 = class(TForm)
@@ -19,11 +18,13 @@ type
       Shift: TShiftState; X, Y: integer);
     procedure FormPaint(Sender: TObject);
   private
-    FPoints: TPoints;
+    FDocument: TDocument;
     { private declarations }
   public
     { public declarations }
   end;
+
+
 
 var
   Form1: TForm1;
@@ -32,24 +33,27 @@ implementation
 
 {$R *.lfm}
 
+
+
 { TForm1 }
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  FPoints := TPoints.Create;
+  FDocument := TDocument.Create;
 end;
 
 
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(FPoints);
+  FDocument.SaveToDefault;
+  FreeAndNil(FDocument);
 end;
 
 
 procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  FPoints.Add(Point(X, Y));
+  FDocument.AddPoint(X, Y);
   Form1.Invalidate;
 end;
 
@@ -60,7 +64,7 @@ const
 var
   point: TPoint;
 begin
-  for point in FPoints do
+  for point in FDocument.GetPoints do
   begin
     Canvas.Ellipse(point.x - UNIT_SIZE, point.y - UNIT_SIZE,
                    point.x + UNIT_SIZE, point.y + UNIT_SIZE);

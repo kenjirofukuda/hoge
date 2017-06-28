@@ -32,7 +32,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="4">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -49,6 +49,11 @@
         <Filename Value="README.md"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
+      <Unit3>
+        <Filename Value="udocument.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UDocument"/>
+      </Unit3>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
