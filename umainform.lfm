@@ -1,7 +1,7 @@
-object Form1: TForm1
-  Left = 591
+object MainForm: TMainForm
+  Left = 440
   Height = 480
-  Top = 277
+  Top = 296
   Width = 680
   Caption = 'Hoge'
   OnCreate = FormCreate

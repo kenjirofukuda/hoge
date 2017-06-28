@@ -1,17 +1,17 @@
-unit UHoge;
+unit UMainForm;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  UDocument;
+  Classes, SysUtils, Forms, Controls, Graphics,
+  UDocument, UPointsDrawer;
 
 type
-  { TForm1 }
+  { TMainForm }
 
-  TForm1 = class(TForm)
+  TMainForm = class(TForm)
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
@@ -19,6 +19,7 @@ type
     procedure FormPaint(Sender: TObject);
   private
     FDocument: TDocument;
+    FPointsDrawer: TPointsDrawer;
     { private declarations }
   public
     { public declarations }
@@ -26,47 +27,41 @@ type
 
 
 var
-  Form1: TForm1;
+  MainForm: TMainForm;
 
 implementation
 
 {$R *.lfm}
 
-{ TForm1 }
+{ TMainForm }
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDocument := TDocument.Create;
   FDocument.LoadFromDefault;
+  FPointsDrawer := TPointsDrawer.Create(FDocument);
 end;
 
 
-procedure TForm1.FormDestroy(Sender: TObject);
+procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   FDocument.SaveToDefault;
+  FreeAndNil(FPointsDrawer);
   FreeAndNil(FDocument);
 end;
 
 
-procedure TForm1.FormMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TMainForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   FDocument.AddPoint(X, Y);
-  Form1.Invalidate;
+  MainForm.Invalidate;
 end;
 
 
-procedure TForm1.FormPaint(Sender: TObject);
-const
-  UNIT_SIZE = 2;
-var
-  point: TPoint;
+procedure TMainForm.FormPaint(Sender: TObject);
 begin
-  for point in FDocument.GetPoints do
-  begin
-    Canvas.Ellipse(point.x - UNIT_SIZE, point.y - UNIT_SIZE,
-                   point.x + UNIT_SIZE, point.y + UNIT_SIZE);
-  end;
+  FPointsDrawer.DrawOn(Canvas);
 end;
 
 end.

@@ -16,6 +16,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
+      <BuildNr Value="1"/>
       <Attributes pvaDebug="True"/>
       <StringTable CompanyName="hoge Inc." ProductName="Hoge" ProductVersion=""/>
     </VersionInfo>
@@ -35,18 +36,18 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="4">
+    <Units Count="5">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="uhoge.pp"/>
+        <Filename Value="umainform.pp"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UHoge"/>
+        <UnitName Value="UMainForm"/>
       </Unit1>
       <Unit2>
         <Filename Value="README.md"/>
@@ -57,6 +58,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UDocument"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="upointsdrawer.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UPointsDrawer"/>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
