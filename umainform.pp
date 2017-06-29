@@ -14,15 +14,17 @@ type
 
   TMainForm = class(TForm)
     MainMenu: TMainMenu;
-    EditMenu: TMenuItem;
-    ClearAllMenuItem: TMenuItem;
-    DebugMenu: TMenuItem;
-    RevealAppConfigDirMenuItem: TMenuItem;
     PointsView: TPaintBox;
     StatusBar: TStatusBar;
-    procedure ClearAllMenuItemClick(Sender: TObject);
+
+    EditMenu: TMenuItem;
+    ClearAllMenuItem: TMenuItem;
+    RevealAppConfigDirMenuItem: TMenuItem;
+    DebugMenu: TMenuItem;
+
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+
     procedure PointsViewMouseMove(Sender: TObject; Shift: TShiftState;
       X, Y: integer);
     procedure PointsViewMouseUp(Sender: TObject; Button: TMouseButton;
@@ -31,11 +33,14 @@ type
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure PointsViewPaint(Sender: TObject);
     procedure PointsViewResize(Sender: TObject);
+
+    procedure ClearAllMenuItemClick(Sender: TObject);
     procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
     procedure DocumentChange(Sender: TObject);
+    procedure UpdateMouseStatus(H, V: integer);
   public
     { public declarations }
   end;
@@ -76,7 +81,7 @@ end;
 procedure TMainForm.PointsViewMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
 begin
-  StatusBar.SimpleText := Format('H: %4d, V: %4d', [X, Y]);
+  UpdateMouseStatus(X, Y);
 end;
 
 
@@ -121,6 +126,23 @@ end;
 procedure TMainForm.RevealAppConfigDirMenuItemClick(Sender: TObject);
 begin
   ShowMessage(UDocument.AppConfigDir);
+end;
+
+
+procedure TMainForm.UpdateMouseStatus(H, V: integer);
+var
+  pt: TPointF;
+  strs: TStringList;
+begin
+  pt := FPointsDrawer.Viewport.DeviceToWorld(H, V);
+  strs := TStringList.Create;
+  strs.Delimiter := ' ';
+  strs.QuoteChar := ' ';
+  strs.Add(Format('H: %4d, V: %4d', [H, V]));
+  strs.Add(Format('X: %10.4f, Y: %10.4f', [pt.x, pt.y]));
+  strs.Add(Format('W: %4d, H: %4d', [PointsView.ClientWidth, PointsView.ClientHeight]));
+  StatusBar.SimpleText := strs.DelimitedText;
+  strs.Free;
 end;
 
 

@@ -106,7 +106,6 @@ procedure TViewport.SetPortSize(Width, Height: integer);
 begin
   SetPortWidth(Width);
   SetPortHeight(Height);
-  ResetPortCenter;
 end;
 
 
