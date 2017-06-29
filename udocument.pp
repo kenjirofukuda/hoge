@@ -19,6 +19,7 @@ type
     procedure LoadFromFile(APath: String);
   public
     procedure AddPoint(X, Y: integer);
+    procedure RemoveAllPoints();
     function GetPoints: TPoints;
     procedure SaveToDefault;
     procedure LoadFromDefault;
@@ -53,6 +54,12 @@ end;
 function TDocument.GetPoints: TPoints;
 begin
   Result := FPoints;
+end;
+
+
+procedure TDocument.RemoveAllPoints;
+begin
+  FPoints.Clear;
 end;
 
 

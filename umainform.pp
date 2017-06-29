@@ -21,9 +21,12 @@ type
     procedure ClearAllMenuItemClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure PointsViewMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: integer);
     procedure PointsViewMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
     procedure PointsViewPaint(Sender: TObject);
+    procedure PointsViewResize(Sender: TObject);
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
@@ -52,7 +55,8 @@ end;
 
 procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
 begin
-  ShowMessage('Must be implement ClearAllMenuItemClick');
+  FDocument.RemoveAllPoints();
+  PointsView.Invalidate;
 end;
 
 
@@ -61,6 +65,13 @@ begin
   FDocument.SaveToDefault;
   FreeAndNil(FPointsDrawer);
   FreeAndNil(FDocument);
+end;
+
+
+procedure TMainForm.PointsViewMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: integer);
+begin
+  StatusBar.SimpleText := Format('H: %4d, V: %4d', [X, Y]);
 end;
 
 
@@ -75,6 +86,13 @@ end;
 procedure TMainForm.PointsViewPaint(Sender: TObject);
 begin
   FPointsDrawer.DrawOn(PointsView.Canvas);
+end;
+
+
+procedure TMainForm.PointsViewResize(Sender: TObject);
+begin
+  StatusBar.SimpleText := Format('W: %4d, H: %4d',
+    [PointsView.ClientWidth, PointsView.ClientHeight]);
 end;
 
 end.

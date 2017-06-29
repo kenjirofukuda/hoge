@@ -22,8 +22,10 @@ object MainForm: TMainForm
     Top = 0
     Width = 680
     Anchors = [akTop, akLeft, akRight, akBottom]
+    OnMouseMove = PointsViewMouseMove
     OnMouseUp = PointsViewMouseUp
     OnPaint = PointsViewPaint
+    OnResize = PointsViewResize
   end
   object StatusBar: TStatusBar
     Left = 0
