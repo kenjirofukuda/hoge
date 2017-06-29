@@ -5,16 +5,19 @@ unit UPointsDrawer;
 interface
 
 uses
-  Classes, Types, Controls, Graphics, ExtCtrls,
-  UDocument;
+  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls,
+  UDocument, UViewport;
 
 type
   TPointsDrawer = class
     constructor Create(ADocument: TDocument);
   private
     FDocument: TDocument;
+    FViewport: TViewport;
   public
+    destructor Destroy; override;
     procedure DrawOn(Canvas: TCanvas);
+    property Viewport: TViewport read FViewport;
   end;
 
 implementation
@@ -23,6 +26,14 @@ implementation
 constructor TPointsDrawer.Create(ADocument: TDocument);
 begin
   FDocument := ADocument;
+  FViewport := TViewport.Create;
+end;
+
+
+destructor TPointsDrawer.Destroy;
+begin
+  FreeAndNil(FViewport);
+  inherited;
 end;
 
 
@@ -30,12 +41,14 @@ procedure TPointsDrawer.DrawOn(Canvas: TCanvas);
 const
   UNIT_SIZE = 2;
 var
-  point: TPointF;
+  xyPoint: TPointF;
+  hvPoint: TPointF;
 begin
-  for point in FDocument.GetPoints do
+  for xyPoint in FDocument.GetPoints do
   begin
-    Canvas.Ellipse(trunc(point.x - UNIT_SIZE), trunc(point.y - UNIT_SIZE),
-                   trunc(point.x + UNIT_SIZE), trunc(point.y + UNIT_SIZE));
+    hvPoint := FViewport.WorldToDevice(xyPoint.x, xyPoint.y);
+    Canvas.Ellipse(trunc(hvPoint.x - UNIT_SIZE), trunc(hvPoint.y - UNIT_SIZE),
+      trunc(hvPoint.x + UNIT_SIZE), trunc(hvPoint.y + UNIT_SIZE));
   end;
 end;
 

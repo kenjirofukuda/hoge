@@ -31,12 +31,15 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="LCL"/>
+        <PackageName Value="BGRABitmapPack"/>
       </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -63,6 +66,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UPointsDrawer"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="uviewport.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UViewport"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

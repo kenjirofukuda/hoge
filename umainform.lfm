@@ -24,6 +24,7 @@ object MainForm: TMainForm
     Anchors = [akTop, akLeft, akRight, akBottom]
     OnMouseMove = PointsViewMouseMove
     OnMouseUp = PointsViewMouseUp
+    OnMouseWheel = PointsViewMouseWheel
     OnPaint = PointsViewPaint
     OnResize = PointsViewResize
   end
@@ -42,6 +43,13 @@ object MainForm: TMainForm
       object ClearAllMenuItem: TMenuItem
         Caption = 'Clear All'
         OnClick = ClearAllMenuItemClick
+      end
+    end
+    object DebugMenu: TMenuItem
+      Caption = 'Debug'
+      object RevealAppConfigDirMenuItem: TMenuItem
+        Caption = 'Reveal AppConfigDir'
+        OnClick = RevealAppConfigDirMenuItemClick
       end
     end
   end
