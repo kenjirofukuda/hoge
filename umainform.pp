@@ -5,18 +5,25 @@ unit UMainForm;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics,
+  Classes, SysUtils, Forms, Controls, Graphics, Menus, ExtCtrls, ComCtrls,
+  Dialogs,
   UDocument, UPointsDrawer;
 
 type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MainMenu: TMainMenu;
+    EditMenu: TMenuItem;
+    ClearAllMenuItem: TMenuItem;
+    PointsView: TPaintBox;
+    StatusBar: TStatusBar;
+    procedure ClearAllMenuItemClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FormMouseUp(Sender: TObject; Button: TMouseButton;
-                          Shift: TShiftState; X, Y: integer);
-    procedure FormPaint(Sender: TObject);
+    procedure PointsViewMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
+    procedure PointsViewPaint(Sender: TObject);
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
@@ -43,6 +50,12 @@ begin
 end;
 
 
+procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
+begin
+  ShowMessage('Must be implement ClearAllMenuItemClick');
+end;
+
+
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   FDocument.SaveToDefault;
@@ -51,17 +64,17 @@ begin
 end;
 
 
-procedure TMainForm.FormMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TMainForm.PointsViewMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   FDocument.AddPoint(X, Y);
-  MainForm.Invalidate;
+  PointsView.Invalidate;
 end;
 
 
-procedure TMainForm.FormPaint(Sender: TObject);
+procedure TMainForm.PointsViewPaint(Sender: TObject);
 begin
-  FPointsDrawer.DrawOn(Canvas);
+  FPointsDrawer.DrawOn(PointsView.Canvas);
 end;
 
 end.

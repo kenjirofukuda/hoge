@@ -1,7 +1,8 @@
 # hoge
 
+Lazarus leaning application. sandbox space.
+
 ## Changes
 
-- 終了時に点を保存。起動時に読み込み
-- クリックしたところをマーク
-
+- points save on quit and load on startup.
+- mark circle at click position.

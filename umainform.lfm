@@ -1,13 +1,46 @@
 object MainForm: TMainForm
-  Left = 440
+  Left = 368
   Height = 480
-  Top = 296
+  Top = 304
   Width = 680
-  Caption = 'Hoge'
+  Caption = 'Points View'
+  ClientHeight = 480
+  ClientWidth = 680
+  Menu = MainMenu
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnMouseUp = FormMouseUp
-  OnPaint = FormPaint
   Position = poScreenCenter
   LCLVersion = '1.6.4.0'
+  object PointsView: TPaintBox
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = StatusBar
+    Left = 0
+    Height = 465
+    Top = 0
+    Width = 680
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    OnMouseUp = PointsViewMouseUp
+    OnPaint = PointsViewPaint
+  end
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 15
+    Top = 465
+    Width = 680
+    Panels = <>
+  end
+  object MainMenu: TMainMenu
+    left = 536
+    top = 16
+    object EditMenu: TMenuItem
+      Caption = 'Edit'
+      object ClearAllMenuItem: TMenuItem
+        Caption = 'Clear All'
+        OnClick = ClearAllMenuItemClick
+      end
+    end
+  end
 end
