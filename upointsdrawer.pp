@@ -5,7 +5,7 @@ unit UPointsDrawer;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, ExtCtrls,
+  Classes, SysUtils, Types, Forms, Controls, Graphics, ExtCtrls,
   UDocument;
 
 type
@@ -30,12 +30,12 @@ procedure TPointsDrawer.DrawOn(Canvas: TCanvas);
 const
   UNIT_SIZE = 2;
 var
-  point: TPoint;
+  point: TPointF;
 begin
   for point in FDocument.GetPoints do
   begin
-    Canvas.Ellipse(point.x - UNIT_SIZE, point.y - UNIT_SIZE,
-                   point.x + UNIT_SIZE, point.y + UNIT_SIZE);
+    Canvas.Ellipse(trunc(point.x - UNIT_SIZE), trunc(point.y - UNIT_SIZE),
+                   trunc(point.x + UNIT_SIZE), trunc(point.y + UNIT_SIZE));
   end;
 end;
 

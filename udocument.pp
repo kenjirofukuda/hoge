@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, Types, LazFileUtils, LazLogger, fgl;
 
 type
-  TPoints = specialize TFPGList<TPoint>;
+  TPoints = specialize TFPGList<TPointF>;
 
   TDocument = class
     constructor Create;
@@ -18,7 +18,7 @@ type
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
   public
-    procedure AddPoint(X, Y: integer);
+    procedure AddPoint(X, Y: single);
     procedure RemoveAllPoints();
     function GetPoints: TPoints;
     procedure SaveToDefault;
@@ -27,7 +27,7 @@ type
 
 function AppConfigDir: String;
 function AppConfigFilePath: String;
-
+function PointF(X,Y: single): TPointF;
 
 implementation
 
@@ -45,9 +45,9 @@ begin
 end;
 
 
-procedure TDocument.AddPoint(X, Y: integer);
+procedure TDocument.AddPoint(X, Y: single);
 begin
-  FPoints.Add(Point(X, Y));
+  FPoints.Add(PointF(X, Y));
 end;
 
 
@@ -66,13 +66,13 @@ end;
 procedure TDocument.SaveToFile(APath: String);
 var
   list: TStringList;
-  point: TPoint;
+  point: TPointF;
 begin
   list := TStringList.Create;
   try
     for point in FPoints do
     begin
-      list.Add(Format('%d, %d', [point.x, point.y]));
+      list.Add(Format('%f,%f', [point.x, point.y]));
     end;
     list.LineBreak := #10;
     list.SaveToFile(APath);
@@ -85,9 +85,9 @@ end;
 procedure TDocument.LoadFromFile(APath: String);
 var
   list, items: TStringList;
-  point: TPoint;
+  point: TPointF;
   str, s1, s2: String;
-  x, y: integer;
+  x, y: single;
 begin
   if not FileExistsUTF8(APath) then
     exit;
@@ -109,8 +109,8 @@ begin
         s1 := Trim(items.Strings[0]);
         s2 := Trim(items.Strings[1]);
         try
-          x := StrToInt(s1);
-          y := StrToInt(s2);
+          x := StrToFloat(s1);
+          y := StrToFloat(s2);
           AddPoint(x, y);
         except
           on E: EConvertError do
@@ -146,6 +146,13 @@ end;
 function AppConfigDir: String;
 begin
   Result := GetAppConfigDirUTF8(False, True);
+end;
+
+
+function PointF(X,Y: single): TPointF;
+begin
+  Result.x := X;
+  Result.y := Y;
 end;
 
 end.
