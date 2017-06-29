@@ -5,7 +5,7 @@ unit UMainForm;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Menus, ExtCtrls, ComCtrls,
+  Classes, SysUtils, Forms, Controls, Menus, ExtCtrls, ComCtrls,
   Dialogs,
   UDocument, UPointsDrawer;
 
@@ -30,7 +30,7 @@ type
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
-    { private declarations }
+    procedure DocumentChange(Sender: TObject);
   public
     { public declarations }
   end;
@@ -50,13 +50,13 @@ begin
   FDocument := TDocument.Create;
   FDocument.LoadFromDefault;
   FPointsDrawer := TPointsDrawer.Create(FDocument);
+  FDocument.OnChange := @DocumentChange;
 end;
 
 
 procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
 begin
   FDocument.RemoveAllPoints();
-  PointsView.Invalidate;
 end;
 
 
@@ -79,7 +79,6 @@ procedure TMainForm.PointsViewMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
   FDocument.AddPoint(X, Y);
-  PointsView.Invalidate;
 end;
 
 
@@ -93,6 +92,12 @@ procedure TMainForm.PointsViewResize(Sender: TObject);
 begin
   StatusBar.SimpleText := Format('W: %4d, H: %4d',
     [PointsView.ClientWidth, PointsView.ClientHeight]);
+end;
+
+
+procedure TMainForm.DocumentChange(Sender: TObject);
+begin
+  PointsView.Invalidate;
 end;
 
 end.

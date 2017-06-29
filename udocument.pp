@@ -5,29 +5,33 @@ unit UDocument;
 interface
 
 uses
-  Classes, SysUtils, Types, LazFileUtils, LazLogger, fgl;
+  Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl;
 
 type
   TPoints = specialize TFPGList<TPointF>;
 
   TDocument = class
     constructor Create;
-    destructor Destroy; override;
   private
     FPoints: TPoints;
+    FOnChange: TNotifyEvent;
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
   public
+    destructor Destroy; override;
     procedure AddPoint(X, Y: single);
     procedure RemoveAllPoints();
     function GetPoints: TPoints;
     procedure SaveToDefault;
     procedure LoadFromDefault;
+    procedure Change;
+  public
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 function AppConfigDir: String;
 function AppConfigFilePath: String;
-function PointF(X,Y: single): TPointF;
+function PointF(X, Y: single): TPointF;
 
 implementation
 
@@ -45,9 +49,17 @@ begin
 end;
 
 
+procedure TDocument.Change;
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+
 procedure TDocument.AddPoint(X, Y: single);
 begin
   FPoints.Add(PointF(X, Y));
+  Change;
 end;
 
 
@@ -60,6 +72,7 @@ end;
 procedure TDocument.RemoveAllPoints;
 begin
   FPoints.Clear;
+  Change;
 end;
 
 
@@ -149,7 +162,7 @@ begin
 end;
 
 
-function PointF(X,Y: single): TPointF;
+function PointF(X, Y: single): TPointF;
 begin
   Result.x := X;
   Result.y := Y;

@@ -5,7 +5,7 @@ unit UPointsDrawer;
 interface
 
 uses
-  Classes, SysUtils, Types, Forms, Controls, Graphics, ExtCtrls,
+  Classes, Types, Controls, Graphics, ExtCtrls,
   UDocument;
 
 type
