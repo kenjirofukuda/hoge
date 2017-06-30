@@ -9,14 +9,20 @@ uses
 
 type
   TXYPointList = specialize TFPGList<TPointF>;
+  TClearAllAction = class;
 
   TDocument = class
     constructor Create;
   private
     FPoints: TXYPointList;
     FOnChange: TNotifyEvent;
+    FLockChange: boolean;
+    FLockCount: longint;
+    FClearAllAction: TClearAllAction;
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
+    procedure LockChange;
+    procedure UnlockChange;
   public
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
@@ -25,9 +31,28 @@ type
     procedure SaveToDefault;
     procedure LoadFromDefault;
     procedure Change;
+
   public
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property ClearAllAction: TClearAllAction read FClearAllAction;
   end;
+
+  { TODO : Use TBasicAction if undoable mechanizum enabled }
+  TClearAllAction = class
+    constructor Create(ADocument: TDocument);
+  private
+    FDocument: TDocument;
+    FEnabled: boolean;
+    FPoints: TXYPointList;
+    function GetEnabled: boolean;
+    function GetUndoable: boolean;
+  public
+    procedure DoIt;
+    procedure UndoIt;
+    property Enabled: boolean read GetEnabled;
+    property Undoable: boolean read GetUndoable;
+  end;
+
 
 function AppConfigDir: String;
 function AppConfigFilePath: String;
@@ -40,6 +65,8 @@ constructor TDocument.Create;
 begin
   inherited;
   FPoints := TXYPointList.Create;
+  FLockChange := False;
+  FClearAllAction := TClearAllAction.Create(Self);
 end;
 
 
@@ -51,8 +78,30 @@ end;
 
 procedure TDocument.Change;
 begin
-  if Assigned(FOnChange) then
-    FOnChange(Self);
+  if FLockChange then
+  begin
+    Inc(FLockCount);
+  end
+  else
+  begin
+    if Assigned(FOnChange) then
+      FOnChange(Self);
+  end;
+end;
+
+
+procedure TDocument.LockChange;
+begin
+  FLockChange := True;
+  FLockCount := 0;
+end;
+
+
+procedure TDocument.UnlockChange;
+begin
+  FLockChange := False;
+  if FLockCount > 0 then
+    Change;
 end;
 
 
@@ -146,6 +195,45 @@ end;
 procedure TDocument.LoadFromDefault;
 begin
   LoadFromFile(AppConfigFilePath);
+end;
+
+
+constructor TClearAllAction.Create(ADocument: TDocument);
+begin
+  FDocument := ADocument;
+  FPoints := TXYPointList.Create;
+end;
+
+
+procedure TClearAllAction.DoIt;
+begin
+  FPoints.Assign(FDocument.GetPoints);
+  FDocument.RemoveAllPoints();
+end;
+
+
+procedure TClearAllAction.UndoIt;
+var
+  xyPoint: TPointF;
+begin
+  FDocument.LockChange;
+  for xyPoint in FPoints do
+  begin
+    FDocument.AddPoint(xyPoint.x, xyPoint.y);
+  end;
+  FDocument.UnlockChange;
+end;
+
+
+function TClearAllAction.GetEnabled: boolean;
+begin
+  Result := FDocument.GetPoints.Count > 0;
+end;
+
+
+function TClearAllAction.GetUndoable: boolean;
+begin
+  Result := FPoints.Count > 0;
 end;
 
 

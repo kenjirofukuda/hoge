@@ -74,12 +74,13 @@ begin
   FPointsDrawer := TPointsDrawer.Create(FDocument);
   FDocument.OnChange := @DocumentChange;
   FTrackingAttributes.MovePoints := THVPointList.Create;
+  ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 end;
 
 
 procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
 begin
-  FDocument.RemoveAllPoints();
+  FDocument.ClearAllAction.DoIt;
 end;
 
 
@@ -209,6 +210,7 @@ end;
 procedure TMainForm.DocumentChange(Sender: TObject);
 begin
   PointsView.Invalidate;
+  ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 end;
 
 end.

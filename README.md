@@ -13,6 +13,7 @@ goal: gdsfeel-lazarus or LazDraw.
 
 latest change at first.
 
+- update menu status [Edit][Clear All]
 - enable middle button view move.
 - enable wheel zooming.
 - support world view port.
