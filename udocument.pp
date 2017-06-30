@@ -8,12 +8,12 @@ uses
   Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl;
 
 type
-  TPoints = specialize TFPGList<TPointF>;
+  TXYPointList = specialize TFPGList<TPointF>;
 
   TDocument = class
     constructor Create;
   private
-    FPoints: TPoints;
+    FPoints: TXYPointList;
     FOnChange: TNotifyEvent;
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
@@ -21,7 +21,7 @@ type
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
     procedure RemoveAllPoints();
-    function GetPoints: TPoints;
+    function GetPoints: TXYPointList;
     procedure SaveToDefault;
     procedure LoadFromDefault;
     procedure Change;
@@ -39,7 +39,7 @@ implementation
 constructor TDocument.Create;
 begin
   inherited;
-  FPoints := TPoints.Create;
+  FPoints := TXYPointList.Create;
 end;
 
 
@@ -63,7 +63,7 @@ begin
 end;
 
 
-function TDocument.GetPoints: TPoints;
+function TDocument.GetPoints: TXYPointList;
 begin
   Result := FPoints;
 end;
@@ -98,7 +98,6 @@ end;
 procedure TDocument.LoadFromFile(APath: String);
 var
   list, items: TStringList;
-  point: TPointF;
   str, s1, s2: String;
   x, y: single;
 begin

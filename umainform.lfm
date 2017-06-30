@@ -22,6 +22,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 680
     Anchors = [akTop, akLeft, akRight, akBottom]
+    OnMouseDown = PointsViewMouseDown
     OnMouseMove = PointsViewMouseMove
     OnMouseUp = PointsViewMouseUp
     OnMouseWheel = PointsViewMouseWheel
