@@ -5,7 +5,7 @@ unit UViewport;
 interface
 
 uses
-  Classes, SysUtils, Types, Math, LazLogger, BGRATransform;
+  Classes, SysUtils, Types, Math, LazLogger, BGRATransform, UGeometyUtils;
 
 const
   VISIBLE_RATIO = 0.98;
@@ -13,9 +13,7 @@ const
 type
   TMatrixList = array [0 .. 99] of TAffineMatrix;
 
-type
   TViewport = class
-
     constructor Create;
 
   private
@@ -66,7 +64,7 @@ type
     procedure WheelZoom(H, V: integer; Direction: single);
   end;
 
-function MidValue(V1, V2: single): single; inline;
+
 
 implementation
 
@@ -305,9 +303,6 @@ begin
 end;
 
 
-function MidValue(V1, V2: single): single;
-begin
-  Result := (Max(V2, V1) - Min(V2, V1)) * 0.5;
-end;
+
 
 end.

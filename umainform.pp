@@ -5,12 +5,11 @@ unit UMainForm;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, fgl, LCLIntf,
-  UDocument, UPointsDrawer, Types;
+  Classes, SysUtils, Types, fgl, UGeometyUtils, UDocument,
+  Forms, Controls, Menus, ExtCtrls, ComCtrls,
+  Dialogs, LCLIntf, UPointsDrawer;
 
 type
-  THVPointList = specialize TFPGList<TPoint>;
 
   TTrackingAttributes = record
     MiddleDown: boolean;

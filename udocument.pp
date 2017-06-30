@@ -5,10 +5,9 @@ unit UDocument;
 interface
 
 uses
-  Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl;
+  Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl, UGeometyUtils;
 
 type
-  TXYPointList = specialize TFPGList<TPointF>;
   TClearAllAction = class;
 
   TDocument = class
@@ -23,6 +22,9 @@ type
     procedure LoadFromFile(APath: String);
     procedure LockChange;
     procedure UnlockChange;
+    procedure Change;
+    function GetBounds: TRectangleF;
+
   public
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
@@ -30,11 +32,11 @@ type
     function GetPoints: TXYPointList;
     procedure SaveToDefault;
     procedure LoadFromDefault;
-    procedure Change;
 
   public
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property ClearAllAction: TClearAllAction read FClearAllAction;
+    property Bounds: TRectangleF read GetBounds;
   end;
 
   { TODO : Use TBasicAction if undoable mechanizum enabled }
@@ -183,6 +185,20 @@ begin
     items.Free;
     list.Free;
   end;
+end;
+
+
+function TDocument.GetBounds: TRectangleF;
+var
+  rect: TRectangleF;
+  point: TPointF;
+begin
+  rect := EmptyRectangleF;
+  for point in FPoints do
+  begin
+    rect := rect.Merge(RectangleF(point, point));
+  end;
+  Result := rect;
 end;
 
 
