@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, fgl,
+  Dialogs, fgl, LCLIntf,
   UDocument, UPointsDrawer, Types;
 
 type
@@ -185,7 +185,7 @@ end;
 
 procedure TMainForm.RevealAppConfigDirMenuItemClick(Sender: TObject);
 begin
-  ShowMessage(UDocument.AppConfigDir);
+  OpenDocument(UDocument.AppConfigDir);
 end;
 
 
