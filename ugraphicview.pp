@@ -23,7 +23,6 @@ type
     procedure HandleMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
 
-
     procedure Paint; override;
     procedure DoOnResize; override;
 
@@ -94,7 +93,6 @@ var
   p1, p2: TPoint;
   wp1, wp2, moved: TPointF;
 begin
-  //UpdateMouseStatus(X, Y);
   if not Assigned(FPointsDrawer) then
     exit;
   with FTrackingAttributes do

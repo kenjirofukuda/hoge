@@ -141,14 +141,14 @@ end;
 procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
   FPointsDrawer.ShowExtentBounds := not FPointsDrawer.ShowExtentBounds;
-  FGraphicView.Refresh;
+  FGraphicView.Invalidate;
 end;
 
 
 procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
   FPointsDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
-  FGraphicView.Refresh;
+  FGraphicView.Invalidate;
 end;
 
 
