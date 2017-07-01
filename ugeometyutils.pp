@@ -65,15 +65,15 @@ end;
 function RectangleF(X1, Y1, X2, Y2: single): TRectangleF;
 begin
   Result.Origin.x := Min(X1, X2);
-  Result.Origin.y := Min(X1, X2);
-  Result.Corner.x := Max(Y1, Y2);
+  Result.Origin.y := Min(Y1, Y2);
+  Result.Corner.x := Max(X1, X2);
   Result.Corner.y := Max(Y1, Y2);
 end;
 
 
 function RectangleF(P1, P2: TPointF): TRectangleF;
 begin
-  Result := RectangleF(P1.x, P1.x, P2.x, P2.y);
+  Result := RectangleF(P1.x, P1.y, P2.x, P2.y);
 end;
 
 

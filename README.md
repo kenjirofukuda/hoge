@@ -13,6 +13,8 @@ goal: gdsfeel-lazarus or LazDraw.
 
 latest change at first.
 
+- [Debug][Show Extent bounds]
+- [Debug][Show Axis line]
 - update menu status [Edit][Clear All]
 - enable middle button view move.
 - enable wheel zooming.

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Types, fgl, UGeometyUtils, UDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, UPointsDrawer;
+  Dialogs, LCLIntf, ActnList, UPointsDrawer;
 
 type
 
@@ -21,6 +21,12 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    ShowExtentBoundsMenuItem: TMenuItem;
+    ShowExtentBoundsAction: TAction;
+    MenuItem1: TMenuItem;
+    ShowAxisLineMenuItem: TMenuItem;
+    ShowAxisLineAction: TAction;
+    ActionList: TActionList;
     MainMenu: TMainMenu;
     PointsView: TPaintBox;
     StatusBar: TStatusBar;
@@ -46,6 +52,9 @@ type
 
     procedure ClearAllMenuItemClick(Sender: TObject);
     procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
+    procedure ShowAxisLineActionExecute(Sender: TObject);
+
+    procedure ShowExtentBoundsActionExecute(Sender: TObject);
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
@@ -75,7 +84,6 @@ begin
   FTrackingAttributes.MovePoints := THVPointList.Create;
   ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 end;
-
 
 procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
 begin
@@ -186,6 +194,19 @@ end;
 procedure TMainForm.RevealAppConfigDirMenuItemClick(Sender: TObject);
 begin
   OpenDocument(UDocument.AppConfigDir);
+end;
+
+procedure TMainForm.ShowAxisLineActionExecute(Sender: TObject);
+begin
+  FPointsDrawer.ShowAxisLine := not FPointsDrawer.ShowAxisLine;
+  PointsView.Refresh;
+end;
+
+
+procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
+begin
+  FPointsDrawer.ShowExtentBounds := not FPointsDrawer.ShowExtentBounds;
+  PointsView.Refresh;
 end;
 
 

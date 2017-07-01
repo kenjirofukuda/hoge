@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 364
+  Left = 422
   Height = 480
-  Top = 397
+  Top = 406
   Width = 680
   Caption = 'Points View'
   ClientHeight = 480
@@ -52,6 +52,31 @@ object MainForm: TMainForm
         Caption = 'Reveal AppConfigDir'
         OnClick = RevealAppConfigDirMenuItemClick
       end
+      object MenuItem1: TMenuItem
+        Caption = '-'
+      end
+      object ShowAxisLineMenuItem: TMenuItem
+        Action = ShowAxisLineAction
+        AutoCheck = True
+        RadioItem = True
+      end
+      object ShowExtentBoundsMenuItem: TMenuItem
+        Action = ShowExtentBoundsAction
+      end
+    end
+  end
+  object ActionList: TActionList
+    left = 557
+    top = 152
+    object ShowAxisLineAction: TAction
+      AutoCheck = True
+      Caption = 'Show Axis line'
+      HelpType = htKeyword
+      OnExecute = ShowAxisLineActionExecute
+    end
+    object ShowExtentBoundsAction: TAction
+      Caption = 'Show Extent bounds'
+      OnExecute = ShowExtentBoundsActionExecute
     end
   end
 end
