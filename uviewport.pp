@@ -9,6 +9,7 @@ uses
 
 const
   VISIBLE_RATIO = 0.98;
+  MIN_SCALE_LIMIT = 0.001;
 
 type
   TMatrixList = array [0 .. 99] of TAffineMatrix;
@@ -128,7 +129,12 @@ procedure TViewport.SetWorldScale(scale: single);
 begin
   if FWorldScale = scale then
     exit;
-  FWorldScale := scale;
+  if FWorldScale = MIN_SCALE_LIMIT then
+    exit;
+  if scale <= MIN_SCALE_LIMIT then
+    FWorldScale := MIN_SCALE_LIMIT
+  else
+    FWorldScale := scale;
   DamageTransform;
 end;
 
@@ -222,7 +228,7 @@ function TViewport.FittingRatio(X1, Y1, X2, Y2: single): single;
 var
   hRatio, vRatio: double;
 begin
-  hRatio := FPortWidth / (Max(X2, X1) - Min(X2, X1))  ;
+  hRatio := FPortWidth / (Max(X2, X1) - Min(X2, X1));
   vRatio := FPortHeight / (Max(Y2, Y1) - Min(Y2, Y1));
   Result := Min(hRatio, vRatio);
 end;
@@ -238,10 +244,13 @@ begin
   SetWorldCenter(MidValue(X2, X1), MidValue(Y2, Y1));
 end;
 
+
 procedure TViewport.SetWorldBounds(AWorldBounds: TRectangleF);
 begin
-  SetWorldBounds(AWorldBounds.Origin.x, AWorldBounds.Origin.y, AWorldBounds.Corner.x,AWorldBounds.Corner.y);
+  SetWorldBounds(AWorldBounds.Origin.x, AWorldBounds.Origin.y,
+    AWorldBounds.Corner.x, AWorldBounds.Corner.y);
 end;
+
 
 procedure TViewport.ResetWorld;
 begin
