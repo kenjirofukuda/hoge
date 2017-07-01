@@ -91,7 +91,7 @@ end;
 
 function MidValue(V1, V2: single): single;
 begin
-  Result := (Max(V2, V1) - Min(V2, V1)) * 0.5;
+  Result := (Max(V2, V1) + Min(V2, V1)) * 0.5;
 end;
 
 

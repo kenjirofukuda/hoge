@@ -40,8 +40,10 @@ constructor TPointsDrawer.Create(ADocument: TDocument);
 begin
   FDocument := ADocument;
   FViewport := TViewport.Create;
-  FShowAxisLine := False;
+  FShowAxisLine := True;
   FShowExtentBounds := False;
+  FViewport.ResetWorld;
+  FViewport.ResetPortCenter;
 end;
 
 
@@ -58,6 +60,7 @@ const
 var
   xyPoint: TPointF;
 begin
+  Canvas.Pen.Color := clBlack;
   if FShowAxisLine then
   begin
     VLine(Canvas, 0);
@@ -74,6 +77,7 @@ end;
 
 procedure TPointsDrawer.FrameExtentBoundsOn(Canvas: TCanvas);
 begin
+  Canvas.Pen.Color := clLtGray;
   FrameBoundsOn(Canvas, FDocument.Bounds);
 end;
 

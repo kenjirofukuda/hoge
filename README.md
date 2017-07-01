@@ -13,8 +13,9 @@ goal: gdsfeel-lazarus or LazDraw.
 
 latest change at first.
 
-- [Debug][Show Extent bounds]
-- [Debug][Show Axis line]
+- implement [View][Fit]
+- implement [Debug][Show Extent bounds]
+- implement [Debug][Show Axis line]
 - update menu status [Edit][Clear All]
 - enable middle button view move.
 - enable wheel zooming.
@@ -29,14 +30,10 @@ latest change at first.
 ## TODO
 
 * Viewing
-	* fit 
 	* zooming limit for safety.
 
 * Edit
 	* add graphics element selectability.	
-* Debug
-	* Reveal AppConfigDir. currentry ShowMessage()
-
 * Element Kind
 	* Segment
 

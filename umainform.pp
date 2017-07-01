@@ -21,6 +21,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    ViewFitAction: TAction;
+    FitMenuItem: TMenuItem;
+    ViewMenu: TMenuItem;
     ShowExtentBoundsMenuItem: TMenuItem;
     ShowExtentBoundsAction: TAction;
     MenuItem1: TMenuItem;
@@ -53,12 +56,15 @@ type
     procedure ClearAllMenuItemClick(Sender: TObject);
     procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
     procedure ShowAxisLineActionExecute(Sender: TObject);
+    procedure ShowAxisLineActionUpdate(Sender: TObject);
 
     procedure ShowExtentBoundsActionExecute(Sender: TObject);
+    procedure ViewFitActionExecute(Sender: TObject);
   private
     FDocument: TDocument;
     FPointsDrawer: TPointsDrawer;
     FTrackingAttributes: TTrackingAttributes;
+    FFirstResizeHandled: boolean;
     procedure DocumentChange(Sender: TObject);
     procedure UpdateMouseStatus(H, V: integer);
   public
@@ -83,7 +89,9 @@ begin
   FDocument.OnChange := @DocumentChange;
   FTrackingAttributes.MovePoints := THVPointList.Create;
   ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
+  FFirstResizeHandled := False;
 end;
+
 
 procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
 begin
@@ -188,6 +196,11 @@ begin
   StatusBar.SimpleText := Format('W: %4d, H: %4d',
     [PointsView.ClientWidth, PointsView.ClientHeight]);
   FPointsDrawer.Viewport.SetPortSize(PointsView.ClientWidth, PointsView.ClientHeight);
+  if not FFirstResizeHandled then
+  begin
+    FPointsDrawer.Viewport.ResetPortCenter;
+    FFirstResizeHandled := True;
+  end;
 end;
 
 
@@ -196,6 +209,7 @@ begin
   OpenDocument(UDocument.AppConfigDir);
 end;
 
+
 procedure TMainForm.ShowAxisLineActionExecute(Sender: TObject);
 begin
   FPointsDrawer.ShowAxisLine := not FPointsDrawer.ShowAxisLine;
@@ -203,9 +217,22 @@ begin
 end;
 
 
+procedure TMainForm.ShowAxisLineActionUpdate(Sender: TObject);
+begin
+  ShowAxisLineMenuItem.Checked := FPointsDrawer.ShowAxisLine;
+end;
+
+
 procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
   FPointsDrawer.ShowExtentBounds := not FPointsDrawer.ShowExtentBounds;
+  PointsView.Refresh;
+end;
+
+
+procedure TMainForm.ViewFitActionExecute(Sender: TObject);
+begin
+  FPointsDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
   PointsView.Refresh;
 end;
 

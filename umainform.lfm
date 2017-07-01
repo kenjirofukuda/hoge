@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 422
+  Left = 289
   Height = 480
-  Top = 406
+  Top = 429
   Width = 680
   Caption = 'Points View'
   ClientHeight = 480
@@ -46,6 +46,12 @@ object MainForm: TMainForm
         OnClick = ClearAllMenuItemClick
       end
     end
+    object ViewMenu: TMenuItem
+      Caption = 'View'
+      object FitMenuItem: TMenuItem
+        Action = ViewFitAction
+      end
+    end
     object DebugMenu: TMenuItem
       Caption = 'Debug'
       object RevealAppConfigDirMenuItem: TMenuItem
@@ -73,10 +79,16 @@ object MainForm: TMainForm
       Caption = 'Show Axis line'
       HelpType = htKeyword
       OnExecute = ShowAxisLineActionExecute
+      OnUpdate = ShowAxisLineActionUpdate
     end
     object ShowExtentBoundsAction: TAction
       Caption = 'Show Extent bounds'
       OnExecute = ShowExtentBoundsActionExecute
+    end
+    object ViewFitAction: TAction
+      Category = 'View'
+      Caption = 'Fit'
+      OnExecute = ViewFitActionExecute
     end
   end
 end

@@ -35,7 +35,6 @@ type
     function BasicTransform: TAffineMatrix;
     function LookupFinalTransform: TAffineMatrix;
     procedure DamageTransform; inline;
-    procedure ResetPortCenter;
     function FittingRatio(X1, Y1, X2, Y2: single): single;
 
   public
@@ -44,6 +43,7 @@ type
     procedure SetPortHeight(Height: integer);
     procedure SetPortSize(Width, Height: integer);
     procedure SetPortCenter(H, V: integer);
+    procedure ResetPortCenter;
 
     {World Operations}
     procedure SetWorldCenter(X, Y: single);
@@ -57,6 +57,7 @@ type
     function FittingTransform(X1, Y1, X2, Y2: single): TAffineMatrix;
     function Transform: TAffineMatrix;
     procedure SetWorldBounds(X1, Y1, X2, Y2: single);
+    procedure SetWorldBounds(AWorldBounds: TRectangleF);
 
     function WorldToDevice(X, Y: single): TPointF;
     function DeviceToWorld(H, V: single): TPointF;
@@ -221,8 +222,8 @@ function TViewport.FittingRatio(X1, Y1, X2, Y2: single): single;
 var
   hRatio, vRatio: double;
 begin
-  hRatio := FPortWidth / MidValue(X2, X1);
-  vRatio := FPortHeight / MidValue(Y2, Y1);
+  hRatio := FPortWidth / (Max(X2, X1) - Min(X2, X1))  ;
+  vRatio := FPortHeight / (Max(Y2, Y1) - Min(Y2, Y1));
   Result := Min(hRatio, vRatio);
 end;
 
@@ -231,12 +232,16 @@ procedure TViewport.SetWorldBounds(X1, Y1, X2, Y2: single);
 var
   ratio: double;
 begin
-  ResetPortCenter;
   ratio := FittingRatio(X1, Y1, X2, Y2);
-  SetWorldCenter(MidValue(X2, X1), MidValue(Y2, Y1));
+  ResetPortCenter;
   SetWorldScale(ratio);
+  SetWorldCenter(MidValue(X2, X1), MidValue(Y2, Y1));
 end;
 
+procedure TViewport.SetWorldBounds(AWorldBounds: TRectangleF);
+begin
+  SetWorldBounds(AWorldBounds.Origin.x, AWorldBounds.Origin.y, AWorldBounds.Corner.x,AWorldBounds.Corner.y);
+end;
 
 procedure TViewport.ResetWorld;
 begin
