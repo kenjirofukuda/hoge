@@ -5,7 +5,8 @@ unit UDocument;
 interface
 
 uses
-  Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl, UGeometyUtils;
+  Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl,
+  UGeometyUtils, UGraphic;
 
 type
   TClearAllAction = class;
@@ -13,7 +14,8 @@ type
   TDocument = class
     constructor Create;
   private
-    FPoints: TXYPointList;
+    FGraphicList: TGraphicList;
+
     FOnChange: TNotifyEvent;
     FLockChange: boolean;
     FLockCount: longint;
@@ -28,8 +30,9 @@ type
   public
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
+    procedure AddGraphic(AGraphic: TGraphic);
     procedure RemoveAllPoints();
-    function GetPoints: TXYPointList;
+    function GetGraphics: TGraphicList;
     procedure SaveToDefault;
     procedure LoadFromDefault;
 
@@ -44,8 +47,7 @@ type
     constructor Create(ADocument: TDocument);
   private
     FDocument: TDocument;
-    FEnabled: boolean;
-    FPoints: TXYPointList;
+    FGraphicList: TGraphicList;
     function GetEnabled: boolean;
     function GetUndoable: boolean;
   public
@@ -58,15 +60,16 @@ type
 
 function AppConfigDir: String;
 function AppConfigFilePath: String;
-function PointF(X, Y: single): TPointF;
+
 
 implementation
+
 
 
 constructor TDocument.Create;
 begin
   inherited;
-  FPoints := TXYPointList.Create;
+  FGraphicList := TGraphicList.Create;
   FLockChange := False;
   FClearAllAction := TClearAllAction.Create(Self);
 end;
@@ -74,7 +77,7 @@ end;
 
 destructor TDocument.Destroy;
 begin
-  FreeAndNil(FPoints);
+  FreeAndNil(FGraphicList);
 end;
 
 
@@ -109,20 +112,26 @@ end;
 
 procedure TDocument.AddPoint(X, Y: single);
 begin
-  FPoints.Add(PointF(X, Y));
+  AddGraphic(TPointGraphic.Create(X, Y));
+end;
+
+
+procedure TDocument.AddGraphic(AGraphic: TGraphic);
+begin
+  FGraphicList.Add(AGraphic);
   Change;
 end;
 
 
-function TDocument.GetPoints: TXYPointList;
+function TDocument.GetGraphics: TGraphicList;
 begin
-  Result := FPoints;
+  Result := FGraphicList;
 end;
 
 
 procedure TDocument.RemoveAllPoints;
 begin
-  FPoints.Clear;
+  FGraphicList.Clear;
   Change;
 end;
 
@@ -130,12 +139,14 @@ end;
 procedure TDocument.SaveToFile(APath: String);
 var
   list: TStringList;
-  point: TPointF;
+  g: TGraphic;
+  point: TPointGraphic;
 begin
   list := TStringList.Create;
   try
-    for point in FPoints do
+    for g in FGraphicList do
     begin
+      point := g as TPointGraphic;
       list.Add(Format('%f,%f', [point.x, point.y]));
     end;
     list.LineBreak := #10;
@@ -191,12 +202,14 @@ end;
 function TDocument.GetBounds: TRectangleF;
 var
   rect: TRectangleF;
-  point: TPointF;
+  g: TGraphic;
+  point: TPointGraphic;
 begin
   rect := EmptyRectangleF;
-  for point in FPoints do
+  for g in FGraphicList do
   begin
-    rect := rect.Merge(RectangleF(point, point));
+    point := g as TPointGraphic;
+    rect := rect.Merge(RectangleF(point.Origin, point.Origin));
   end;
   Result := rect;
 end;
@@ -217,25 +230,27 @@ end;
 constructor TClearAllAction.Create(ADocument: TDocument);
 begin
   FDocument := ADocument;
-  FPoints := TXYPointList.Create;
+  //FPoints := TXYPointList.Create;
+  FGraphicList := TGraphicList.Create;
 end;
 
 
 procedure TClearAllAction.DoIt;
 begin
-  FPoints.Assign(FDocument.GetPoints);
+  //FPoints.Assign(FDocument.GetGraphics);
+  FGraphicList.Assign(FDocument.GetGraphics);
   FDocument.RemoveAllPoints();
 end;
 
 
 procedure TClearAllAction.UndoIt;
 var
-  xyPoint: TPointF;
+  g: TGraphic;
 begin
   FDocument.LockChange;
-  for xyPoint in FPoints do
+  for g in FGraphicList do
   begin
-    FDocument.AddPoint(xyPoint.x, xyPoint.y);
+    FDocument.AddGraphic(g);
   end;
   FDocument.UnlockChange;
 end;
@@ -243,13 +258,13 @@ end;
 
 function TClearAllAction.GetEnabled: boolean;
 begin
-  Result := FDocument.GetPoints.Count > 0;
+  Result := FDocument.GetGraphics.Count > 0;
 end;
 
 
 function TClearAllAction.GetUndoable: boolean;
 begin
-  Result := FPoints.Count > 0;
+  Result := FGraphicList.Count > 0;
 end;
 
 
@@ -265,10 +280,5 @@ begin
 end;
 
 
-function PointF(X, Y: single): TPointF;
-begin
-  Result.x := X;
-  Result.y := Y;
-end;
 
 end.

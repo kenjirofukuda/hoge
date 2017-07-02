@@ -5,9 +5,9 @@ unit UMainForm;
 interface
 
 uses
-  Classes, SysUtils, Types, UGeometyUtils, UDocument,
+  Classes, SysUtils, Types, UDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, ActnList, UPointsDrawer, UGraphicView;
+  Dialogs, LCLIntf, ActnList, UGraphicDrawer, UGraphicView;
 
 type
   { TMainForm }
@@ -46,7 +46,7 @@ type
     procedure ViewFitActionExecute(Sender: TObject);
   private
     FDocument: TDocument;
-    FPointsDrawer: TPointsDrawer;
+    FGraphicDrawer: TGraphicDrawer;
     FGraphicView: TGraphicView;
     procedure DocumentChange(Sender: TObject);
     procedure UpdateMouseStatus(H, V: integer);
@@ -68,7 +68,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDocument := TDocument.Create;
   FDocument.LoadFromDefault;
-  FPointsDrawer := TPointsDrawer.Create(FDocument);
+  FGraphicDrawer := TGraphicDrawer.Create(FDocument);
   FDocument.OnChange := @DocumentChange;
   ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 
@@ -76,7 +76,7 @@ begin
   with FGraphicView do
   begin
     Document := FDocument;
-    PointsDrawer := FPointsDrawer;
+    GraphicDrawer := FGraphicDrawer;
     AnchorSideLeft.Control := Self;
     AnchorSideTop.Control := Self;
     AnchorSideRight.Control := Self;
@@ -100,7 +100,7 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   FDocument.SaveToDefault;
-  FreeAndNil(FPointsDrawer);
+  FreeAndNil(FGraphicDrawer);
   FreeAndNil(FDocument);
 end;
 
@@ -127,27 +127,27 @@ end;
 
 procedure TMainForm.ShowAxisLineActionExecute(Sender: TObject);
 begin
-  FPointsDrawer.ShowAxisLine := not FPointsDrawer.ShowAxisLine;
+  FGraphicDrawer.ShowAxisLine := not FGraphicDrawer.ShowAxisLine;
   FGraphicView.Invalidate;
 end;
 
 
 procedure TMainForm.ShowAxisLineActionUpdate(Sender: TObject);
 begin
-  ShowAxisLineMenuItem.Checked := FPointsDrawer.ShowAxisLine;
+  ShowAxisLineMenuItem.Checked := FGraphicDrawer.ShowAxisLine;
 end;
 
 
 procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
-  FPointsDrawer.ShowExtentBounds := not FPointsDrawer.ShowExtentBounds;
+  FGraphicDrawer.ShowExtentBounds := not FGraphicDrawer.ShowExtentBounds;
   FGraphicView.Invalidate;
 end;
 
 
 procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
-  FPointsDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
+  FGraphicDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
   FGraphicView.Invalidate;
 end;
 
@@ -157,7 +157,7 @@ var
   pt: TPointF;
   strs: TStringList;
 begin
-  pt := FPointsDrawer.Viewport.DeviceToWorld(H, V);
+  pt := FGraphicDrawer.Viewport.DeviceToWorld(H, V);
   strs := TStringList.Create;
   strs.Delimiter := ' ';
   strs.QuoteChar := ' ';

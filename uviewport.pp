@@ -129,12 +129,7 @@ procedure TViewport.SetWorldScale(scale: single);
 begin
   if FWorldScale = scale then
     exit;
-  if FWorldScale = MIN_SCALE_LIMIT then
-    exit;
-  if scale <= MIN_SCALE_LIMIT then
-    FWorldScale := MIN_SCALE_LIMIT
-  else
-    FWorldScale := scale;
+  FWorldScale := scale;
   DamageTransform;
 end;
 

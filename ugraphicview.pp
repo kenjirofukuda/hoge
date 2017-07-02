@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Types, UGeometyUtils, UDocument,
-  Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, UPointsDrawer;
+  Controls, Menus, ExtCtrls,
+  Dialogs, LCLIntf, UGraphicDrawer;
 
 type
   TTrackingAttributes = record
@@ -35,7 +35,7 @@ type
 
   private
     FDocument: TDocument;
-    FPointsDrawer: TPointsDrawer;
+    FGraphicDrawer: TGraphicDrawer;
     FTrackingAttributes: TTrackingAttributes;
     FFirstResizeHandled: boolean;
     procedure HandleMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
@@ -49,7 +49,7 @@ type
   public
     destructor Destroy; override;
     property Document: TDocument read FDocument write FDocument;
-    property PointsDrawer: TPointsDrawer read FPointsDrawer write FPointsDrawer;
+    property GraphicDrawer: TGraphicDrawer read FGraphicDrawer write FGraphicDrawer;
   end;
 
 implementation
@@ -71,7 +71,7 @@ end;
 procedure TGraphicView.HandleMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
   if Button = mbMiddle then
   begin
@@ -93,7 +93,7 @@ var
   p1, p2: TPoint;
   wp1, wp2, moved: TPointF;
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
   with FTrackingAttributes do
   begin
@@ -107,13 +107,13 @@ begin
     begin
       p1 := MovePoints.Items[MovePoints.Count - 2];
       p2 := MovePoints.Items[MovePoints.Count - 1];
-      with FPointsDrawer.Viewport do
+      with FGraphicDrawer.Viewport do
       begin
         wp1 := DeviceToWorld(p1.x, p1.y);
         wp2 := DeviceToWorld(p2.x, p2.y);
       end;
       moved := wp2 - wp1;
-      FPointsDrawer.Viewport.OffSetWorldCenter(-moved.x, -moved.y);
+      FGraphicDrawer.Viewport.OffSetWorldCenter(-moved.x, -moved.y);
       Invalidate;
     end;
   end;
@@ -125,13 +125,13 @@ procedure TGraphicView.HandleMouseUp(Sender: TObject; Button: TMouseButton;
 var
   xyPoint: TPointF;
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
   if not Assigned(FDocument) then
     exit;
   if Button = mbLeft then
   begin
-    xyPoint := FPointsDrawer.Viewport.DeviceToWorld(X, Y);
+    xyPoint := FGraphicDrawer.Viewport.DeviceToWorld(X, Y);
     FDocument.AddPoint(xyPoint.x, xyPoint.y);
   end;
   FTrackingAttributes.MiddleDown := False;
@@ -143,33 +143,33 @@ procedure TGraphicView.HandleMouseWheel(Sender: TObject; Shift: TShiftState;
 var
   direction: single;
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
   if WheelDelta < 0 then
     direction := -1.0
   else
     direction := 1.0;
-  FPointsDrawer.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
+  FGraphicDrawer.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
   Invalidate;
 end;
 
 
 procedure TGraphicView.HandlePaint(Sender: TObject);
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
-  FPointsDrawer.DrawOn(Canvas);
+  FGraphicDrawer.DrawOn(Canvas);
 end;
 
 
 procedure TGraphicView.HandleResize(Sender: TObject);
 begin
-  if not Assigned(FPointsDrawer) then
+  if not Assigned(FGraphicDrawer) then
     exit;
-  FPointsDrawer.Viewport.SetPortSize(ClientWidth, ClientHeight);
+  FGraphicDrawer.Viewport.SetPortSize(ClientWidth, ClientHeight);
   if not FFirstResizeHandled then
   begin
-    FPointsDrawer.Viewport.ResetPortCenter;
+    FGraphicDrawer.Viewport.ResetPortCenter;
     FFirstResizeHandled := True;
   end;
 end;

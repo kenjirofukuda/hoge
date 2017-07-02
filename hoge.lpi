@@ -62,9 +62,9 @@
         <UnitName Value="UDocument"/>
       </Unit3>
       <Unit4>
-        <Filename Value="upointsdrawer.pp"/>
+        <Filename Value="ugraphicdrawer.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UPointsDrawer"/>
+        <UnitName Value="UGraphicDrawer"/>
       </Unit4>
       <Unit5>
         <Filename Value="uviewport.pp"/>

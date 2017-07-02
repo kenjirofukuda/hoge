@@ -31,6 +31,7 @@ type
 
 function MidValue(V1, V2: single): single; inline;
 
+function PointF(X, Y: single): TPointF;
 function RectangleF(X1, Y1, X2, Y2: single): TRectangleF;
 function RectangleF(P1, P2: TPointF): TRectangleF;
 function EmptyRectangleF: TRectangleF;
@@ -59,6 +60,13 @@ end;
 function TRectangleF.GetCenter: TPointF;
 begin
   Result := Corner - Origin;
+end;
+
+
+function PointF(X, Y: single): TPointF;
+begin
+  Result.x := X;
+  Result.y := Y;
 end;
 
 

@@ -1,27 +1,26 @@
-unit UPointsDrawer;
+unit UGraphicDrawer;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls,
-  UDocument, UViewport, UGeometyUtils;
+  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, fgl,
+  UViewport, UGeometyUtils, UDocument;
 
 type
-  TPointsDrawer = class
+  TGraphicDrawer = class
     constructor Create(ADocument: TDocument);
 
   private
     FDocument: TDocument;
     FViewport: TViewport;
-    FShowAxisLine: Boolean;
-    FShowExtentBounds: Boolean;
+    FShowAxisLine: boolean;
+    FShowExtentBounds: boolean;
 
     procedure VLine(Canvas: TCanvas; AXValue: single);
     procedure HLine(Canvas: TCanvas; AYValue: single);
-    procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
-  AUnitSize: integer);
+    procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
 
   public
@@ -29,14 +28,18 @@ type
     procedure DrawOn(Canvas: TCanvas);
     procedure FrameExtentBoundsOn(Canvas: TCanvas);
     property Viewport: TViewport read FViewport;
-    property ShowAxisLine: Boolean read FShowAxisLine write FShowAxisLine;
-    property ShowExtentBounds: Boolean read FShowExtentBounds write FShowExtentBounds;
+    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
+    property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
   end;
+
 
 implementation
 
+uses
+  UGraphic;
 
-constructor TPointsDrawer.Create(ADocument: TDocument);
+
+constructor TGraphicDrawer.Create(ADocument: TDocument);
 begin
   FDocument := ADocument;
   FViewport := TViewport.Create;
@@ -47,18 +50,19 @@ begin
 end;
 
 
-destructor TPointsDrawer.Destroy;
+destructor TGraphicDrawer.Destroy;
 begin
   FreeAndNil(FViewport);
   inherited;
 end;
 
 
-procedure TPointsDrawer.DrawOn(Canvas: TCanvas);
+procedure TGraphicDrawer.DrawOn(Canvas: TCanvas);
 const
   UNIT_SIZE = 2;
 var
-  xyPoint: TPointF;
+  g: TGraphic;
+  point: TPointGraphic;
 begin
   Canvas.Pen.Color := clBlack;
   if FShowAxisLine then
@@ -66,23 +70,25 @@ begin
     VLine(Canvas, 0);
     HLine(Canvas, 0);
   end;
-  for xyPoint in FDocument.GetPoints do
+  for g in FDocument.GetGraphics do
   begin
-    FramePointOn(Canvas, xyPoint, UNIT_SIZE);
+    point := g as TPointGraphic;
+    FramePointOn(Canvas, point.Origin, UNIT_SIZE);
   end;
   if ShowExtentBounds then
-     FrameExtentBoundsOn(Canvas);
+    FrameExtentBoundsOn(Canvas);
+
 end;
 
 
-procedure TPointsDrawer.FrameExtentBoundsOn(Canvas: TCanvas);
+procedure TGraphicDrawer.FrameExtentBoundsOn(Canvas: TCanvas);
 begin
   Canvas.Pen.Color := clLtGray;
   FrameBoundsOn(Canvas, FDocument.Bounds);
 end;
 
 
-procedure TPointsDrawer.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
+procedure TGraphicDrawer.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
   AUnitSize: integer);
 var
   hvPoint: TPointF;
@@ -93,7 +99,7 @@ begin
 end;
 
 
-procedure TPointsDrawer.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
+procedure TGraphicDrawer.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
 var
   hvOrigin: TPointF;
   hvCorner: TPointF;
@@ -105,7 +111,7 @@ begin
 end;
 
 
-procedure TPointsDrawer.VLine(Canvas: TCanvas; AXValue: single);
+procedure TGraphicDrawer.VLine(Canvas: TCanvas; AXValue: single);
 var
   xyPoint: TPointF;
   hvPoint: TPointF;
@@ -117,7 +123,7 @@ begin
 end;
 
 
-procedure TPointsDrawer.HLine(Canvas: TCanvas; AYValue: single);
+procedure TGraphicDrawer.HLine(Canvas: TCanvas; AYValue: single);
 var
   xyPoint: TPointF;
   hvPoint: TPointF;
@@ -127,6 +133,5 @@ begin
   hvPoint := FViewport.WorldToDevice(xyPoint.x, xyPoint.y);
   Canvas.Line(0, round(hvPoint.y), Canvas.Width, round(hvPoint.y));
 end;
-
 
 end.
