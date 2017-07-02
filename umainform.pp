@@ -13,45 +13,52 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
-    ViewFitAction: TAction;
-    FitMenuItem: TMenuItem;
-    ViewMenu: TMenuItem;
-    ShowExtentBoundsMenuItem: TMenuItem;
-    ShowExtentBoundsAction: TAction;
-    MenuItem1: TMenuItem;
-    ShowAxisLineMenuItem: TMenuItem;
-    ShowAxisLineAction: TAction;
-    ActionList: TActionList;
-    MainMenu: TMainMenu;
     StatusBar: TStatusBar;
 
+    {Actions}
+    ActionList: TActionList;
+    ClearAllAction: TAction;
+    ViewFitAction: TAction;
+    ShowExtentBoundsAction: TAction;
+    ShowAxisLineAction: TAction;
+
+    MainMenu: TMainMenu;
+    {[Edit}
     EditMenu: TMenuItem;
     ClearAllMenuItem: TMenuItem;
+
+    {[View}
+    ViewMenu: TMenuItem;
+    FitMenuItem: TMenuItem;
+
+    {[Debug}
     DebugMenu: TMenuItem;
     RevealAppConfigDirMenuItem: TMenuItem;
+    MenuItem1: TMenuItem;
+    ShowExtentBoundsMenuItem: TMenuItem;
+    ShowAxisLineMenuItem: TMenuItem;
+
+    {Actions}
+    procedure ClearAllActionExecute(Sender: TObject);
+    procedure ClearAllActionUpdate(Sender: TObject);
+    procedure ShowAxisLineActionExecute(Sender: TObject);
+    procedure ShowAxisLineActionUpdate(Sender: TObject);
+    procedure ShowExtentBoundsActionExecute(Sender: TObject);
+    procedure ViewFitActionExecute(Sender: TObject);
+    procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-
     procedure GraphicViewMouseMove(Sender: TObject; Shift: TShiftState;
       X, Y: integer);
     procedure GraphicViewResize(Sender: TObject);
 
-    procedure ClearAllMenuItemClick(Sender: TObject);
-    procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
-    procedure ShowAxisLineActionExecute(Sender: TObject);
-    procedure ShowAxisLineActionUpdate(Sender: TObject);
-
-    procedure ShowExtentBoundsActionExecute(Sender: TObject);
-    procedure ViewFitActionExecute(Sender: TObject);
   private
     FDocument: TDocument;
     FGraphicDrawer: TGraphicDrawer;
     FGraphicView: TGraphicView;
     procedure DocumentChange(Sender: TObject);
     procedure UpdateMouseStatus(H, V: integer);
-  public
-    { public declarations }
   end;
 
 
@@ -73,7 +80,6 @@ begin
   FDocument.LoadFromDefault;
   FGraphicDrawer := TGraphicDrawerImpl.Create;
   FDocument.OnChange := @DocumentChange;
-  ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 
   FGraphicView := TGraphicView.Create(self);
   with FGraphicView do
@@ -94,12 +100,6 @@ begin
 end;
 
 
-procedure TMainForm.ClearAllMenuItemClick(Sender: TObject);
-begin
-  FDocument.ClearAllAction.DoIt;
-end;
-
-
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   FDocument.SaveToDefault;
@@ -108,17 +108,16 @@ begin
 end;
 
 
-procedure TMainForm.GraphicViewMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: integer);
+(* ----- Actions ----- *)
+procedure TMainForm.ClearAllActionUpdate(Sender: TObject);
 begin
-  UpdateMouseStatus(X, Y);
+  ClearAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
 end;
 
 
-procedure TMainForm.GraphicViewResize(Sender: TObject);
+procedure TMainForm.ClearAllActionExecute(Sender: TObject);
 begin
-  StatusBar.SimpleText := Format('W: %4d, H: %4d',
-    [FGraphicView.ClientWidth, FGraphicView.ClientHeight]);
+  FDocument.RemoveAllPoints();
 end;
 
 
@@ -130,14 +129,14 @@ end;
 
 procedure TMainForm.ShowAxisLineActionExecute(Sender: TObject);
 begin
-  FGraphicDrawer.ShowAxisLine := not FGraphicDrawer.ShowAxisLine;
+  FGraphicView.ShowAxisLine := not FGraphicView.ShowAxisLine;
   FGraphicView.Invalidate;
 end;
 
 
 procedure TMainForm.ShowAxisLineActionUpdate(Sender: TObject);
 begin
-  ShowAxisLineMenuItem.Checked := FGraphicDrawer.ShowAxisLine;
+  ShowAxisLineMenuItem.Checked := FGraphicView.ShowAxisLine;
 end;
 
 
@@ -152,6 +151,21 @@ procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
   FGraphicDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
   FGraphicView.Invalidate;
+end;
+
+
+(* ----- Events ----- *)
+procedure TMainForm.GraphicViewMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: integer);
+begin
+  UpdateMouseStatus(X, Y);
+end;
+
+
+procedure TMainForm.GraphicViewResize(Sender: TObject);
+begin
+  StatusBar.SimpleText := Format('W: %4d, H: %4d',
+    [FGraphicView.ClientWidth, FGraphicView.ClientHeight]);
 end;
 
 
@@ -176,7 +190,6 @@ end;
 procedure TMainForm.DocumentChange(Sender: TObject);
 begin
   FGraphicView.Invalidate;
-  ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 end;
 
 end.

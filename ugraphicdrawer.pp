@@ -10,10 +10,15 @@ uses
 
 type
   TGraphicDrawerImpl = class(TGraphicDrawer)
-  public
-    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); override;
+
+  private
     procedure VLine(Canvas: TCanvas; AXValue: single);
     procedure HLine(Canvas: TCanvas; AYValue: single);
+
+  public
+    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); override;
+    procedure DrawAxisLineOn(Canvas: TCanvas); override;
+
     procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
       AUnitSize: integer); override;
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF); override;
@@ -30,16 +35,19 @@ procedure TGraphicDrawerImpl.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList)
 var
   g: TGraphic;
 begin
-  Canvas.Pen.Color := clBlack;
-  if ShowAxisLine then
-  begin
-    VLine(Canvas, 0);
-    HLine(Canvas, 0);
-  end;
   for g in AGraphicList do
     g.DrawOn(Canvas, self);
 end;
 
+
+procedure TGraphicDrawerImpl.DrawAxisLineOn(Canvas: TCanvas);
+var
+  g: TGraphic;
+begin
+  Canvas.Pen.Color := clBlack;
+  VLine(Canvas, 0);
+  HLine(Canvas, 0);
+end;
 
 
 procedure TGraphicDrawerImpl.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;

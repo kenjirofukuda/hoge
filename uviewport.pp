@@ -311,7 +311,4 @@ begin
   DamageTransform;
 end;
 
-
-
-
 end.

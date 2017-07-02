@@ -9,7 +9,6 @@ uses
   UGeometyUtils, UGraphicBase, UGraphic;
 
 type
-  TClearAllAction = class;
 
   TDocument = class
     constructor Create;
@@ -19,7 +18,6 @@ type
     FOnChange: TNotifyEvent;
     FLockChange: boolean;
     FLockCount: longint;
-    FClearAllAction: TClearAllAction;
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
     procedure LockChange;
@@ -38,24 +36,9 @@ type
 
   public
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
-    property ClearAllAction: TClearAllAction read FClearAllAction;
     property Bounds: TRectangleF read GetBounds;
   end;
 
-  { TODO : Use TBasicAction if undoable mechanizum enabled }
-  TClearAllAction = class
-    constructor Create(ADocument: TDocument);
-  private
-    FDocument: TDocument;
-    FGraphicList: TGraphicList;
-    function GetEnabled: boolean;
-    function GetUndoable: boolean;
-  public
-    procedure DoIt;
-    procedure UndoIt;
-    property Enabled: boolean read GetEnabled;
-    property Undoable: boolean read GetUndoable;
-  end;
 
 
 function AppConfigDir: String;
@@ -65,13 +48,11 @@ function AppConfigFilePath: String;
 implementation
 
 
-
 constructor TDocument.Create;
 begin
   inherited;
   FGraphicList := TGraphicList.Create;
   FLockChange := False;
-  FClearAllAction := TClearAllAction.Create(Self);
 end;
 
 
@@ -224,46 +205,6 @@ end;
 procedure TDocument.LoadFromDefault;
 begin
   LoadFromFile(AppConfigFilePath);
-end;
-
-
-constructor TClearAllAction.Create(ADocument: TDocument);
-begin
-  FDocument := ADocument;
-  //FPoints := TXYPointList.Create;
-  FGraphicList := TGraphicList.Create;
-end;
-
-
-procedure TClearAllAction.DoIt;
-begin
-  FGraphicList.Assign(FDocument.GetGraphics);
-  FDocument.RemoveAllPoints();
-end;
-
-
-procedure TClearAllAction.UndoIt;
-var
-  g: TGraphic;
-begin
-  FDocument.LockChange;
-  for g in FGraphicList do
-  begin
-    FDocument.AddGraphic(g);
-  end;
-  FDocument.UnlockChange;
-end;
-
-
-function TClearAllAction.GetEnabled: boolean;
-begin
-  Result := FDocument.GetGraphics.Count > 0;
-end;
-
-
-function TClearAllAction.GetUndoable: boolean;
-begin
-  Result := FGraphicList.Count > 0;
 end;
 
 

@@ -24,8 +24,7 @@ object MainForm: TMainForm
     object EditMenu: TMenuItem
       Caption = 'Edit'
       object ClearAllMenuItem: TMenuItem
-        Caption = 'Clear All'
-        OnClick = ClearAllMenuItemClick
+        Action = ClearAllAction
       end
     end
     object ViewMenu: TMenuItem
@@ -71,6 +70,11 @@ object MainForm: TMainForm
       Category = 'View'
       Caption = 'Fit'
       OnExecute = ViewFitActionExecute
+    end
+    object ClearAllAction: TAction
+      Caption = 'Clear All'
+      OnExecute = ClearAllActionExecute
+      OnUpdate = ClearAllActionUpdate
     end
   end
 end

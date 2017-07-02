@@ -13,27 +13,24 @@ type
 
   TGraphicList = specialize TFPGObjectList<TGraphic>;
 
-  TGraphicDrawer = class
+  TGraphicDrawer = class abstract
     constructor Create; virtual;
 
   private
-    FShowAxisLine: boolean;
     FViewport: TViewport;
 
   public
     destructor Destroy; override;
     procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); virtual; abstract;
-    //  procedure VLine(Canvas: TCanvas; AXValue: single);
-    //  procedure HLine(Canvas: TCanvas; AYValue: single);
+    procedure DrawAxisLineOn(Canvas: TCanvas); virtual; abstract;
     procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
       virtual; abstract;
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
       virtual; abstract;
     property Viewport: TViewport read FViewport;
-    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
   end;
 
-  TGraphic = class
+  TGraphic = class abstract
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
   end;
 
@@ -44,7 +41,6 @@ implementation
 constructor TGraphicDrawer.Create;
 begin
   FViewport := TViewport.Create;
-  FShowAxisLine := True;
   FViewport.ResetWorld;
   FViewport.ResetPortCenter;
 end;

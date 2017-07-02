@@ -20,9 +20,6 @@ type
   TGraphicView = class(TPaintBox)
     constructor Create(AOwner: TComponent); override;
 
-    procedure HandleMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer);
-
     procedure Paint; override;
     procedure DoOnResize; override;
 
@@ -38,8 +35,11 @@ type
     FGraphicDrawer: TGraphicDrawer;
     FTrackingAttributes: TTrackingAttributes;
     FFirstResizeHandled: boolean;
-
     FShowExtentBounds: boolean;
+    FShowAxisLine: boolean;
+
+    procedure HandleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
     procedure HandleMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
     procedure HandleMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -53,6 +53,7 @@ type
     property Document: TDocument read FDocument write FDocument;
     property GraphicDrawer: TGraphicDrawer read FGraphicDrawer write FGraphicDrawer;
     property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
+    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
   end;
 
 implementation
@@ -61,6 +62,8 @@ implementation
 constructor TGraphicView.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FShowExtentBounds := False;
+  FShowAxisLine := True;
 end;
 
 
@@ -161,6 +164,11 @@ procedure TGraphicView.HandlePaint(Sender: TObject);
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
+  if ShowAxisLine then
+  begin
+    FGraphicDrawer.DrawAxisLineOn(Canvas);
+  end;
+  Canvas.Pen.Color := clBlack;
   FGraphicDrawer.DrawOn(Canvas, FDocument.GetGraphics);
   Canvas.Pen.Color := clLtGray;
   if ShowExtentBounds then
