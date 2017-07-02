@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Types, UDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, ActnList, UGraphicDrawer, UGraphicView;
+  Dialogs, LCLIntf, ActnList, UGraphicBase, UGraphicView;
 
 type
   { TMainForm }
@@ -60,6 +60,9 @@ var
 
 implementation
 
+uses
+  UGraphicDrawer;
+
 {$R *.lfm}
 
 { TMainForm }
@@ -68,7 +71,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDocument := TDocument.Create;
   FDocument.LoadFromDefault;
-  FGraphicDrawer := TGraphicDrawer.Create;
+  FGraphicDrawer := TGraphicDrawerImpl.Create;
   FDocument.OnChange := @DocumentChange;
   ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 

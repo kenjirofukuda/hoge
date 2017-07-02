@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl,
-  UGeometyUtils, UGraphic;
+  UGeometyUtils, UGraphicBase, UGraphic;
 
 type
   TClearAllAction = class;
@@ -237,7 +237,6 @@ end;
 
 procedure TClearAllAction.DoIt;
 begin
-  //FPoints.Assign(FDocument.GetGraphics);
   FGraphicList.Assign(FDocument.GetGraphics);
   FDocument.RemoveAllPoints();
 end;

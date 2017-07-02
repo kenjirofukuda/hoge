@@ -6,113 +6,85 @@ interface
 
 uses
   Classes, SysUtils, Types, Controls, Graphics, ExtCtrls,
-  UViewport, UGeometyUtils, UGraphic;
+  UViewport, UGeometyUtils, UGraphicBase;
 
 type
-  TGraphicDrawer = class
-    constructor Create;
-
-  private
-    FViewport: TViewport;
-    FShowAxisLine: boolean;
-
+  TGraphicDrawerImpl = class(TGraphicDrawer)
   public
-    destructor Destroy; override;
-    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
-    property Viewport: TViewport read FViewport;
-    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
+    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); override;
     procedure VLine(Canvas: TCanvas; AXValue: single);
     procedure HLine(Canvas: TCanvas; AYValue: single);
-    procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
-    procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
+    procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
+      AUnitSize: integer); override;
+    procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF); override;
   end;
 
 
 implementation
 
+uses
+  UGraphic;
 
 
-constructor TGraphicDrawer.Create;
-begin
-  FViewport := TViewport.Create;
-  FShowAxisLine := True;
-  FViewport.ResetWorld;
-  FViewport.ResetPortCenter;
-end;
-
-
-destructor TGraphicDrawer.Destroy;
-begin
-  FreeAndNil(FViewport);
-  inherited;
-end;
-
-
-procedure TGraphicDrawer.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
-const
-  UNIT_SIZE = 2;
+procedure TGraphicDrawerImpl.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
 var
   g: TGraphic;
-  point: TPointGraphic;
 begin
   Canvas.Pen.Color := clBlack;
-  if FShowAxisLine then
+  if ShowAxisLine then
   begin
     VLine(Canvas, 0);
     HLine(Canvas, 0);
   end;
   for g in AGraphicList do
-  begin
-    point := g as TPointGraphic;
-    FramePointOn(Canvas, point.Origin, UNIT_SIZE);
-  end;
+    g.DrawOn(Canvas, self);
 end;
 
 
 
-procedure TGraphicDrawer.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
+procedure TGraphicDrawerImpl.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
   AUnitSize: integer);
 var
   hvPoint: TPointF;
 begin
-  hvPoint := FViewport.WorldToDevice(AWorldPoint.x, AWorldPoint.y);
+  hvPoint := Viewport.WorldToDevice(AWorldPoint.x, AWorldPoint.y);
   Canvas.Ellipse(round(hvPoint.x - AUnitSize), round(hvPoint.y - AUnitSize),
     round(hvPoint.x + AUnitSize), round(hvPoint.y + AUnitSize));
 end;
 
 
-procedure TGraphicDrawer.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
+procedure TGraphicDrawerImpl.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
 var
   hvOrigin: TPointF;
   hvCorner: TPointF;
 begin
-  hvOrigin := FViewport.WorldToDevice(AWorldBounds.Origin.x, AWorldBounds.Origin.y);
-  hvCorner := FViewport.WorldToDevice(AWorldBounds.Corner.x, AWorldBounds.Corner.y);
+  hvOrigin := Viewport.WorldToDevice(AWorldBounds.Origin.x, AWorldBounds.Origin.y);
+  hvCorner := Viewport.WorldToDevice(AWorldBounds.Corner.x, AWorldBounds.Corner.y);
   Canvas.Frame(round(hvOrigin.x), round(hvCorner.y), round(hvCorner.x),
     round(hvOrigin.y));
 end;
 
 
-procedure TGraphicDrawer.VLine(Canvas: TCanvas; AXValue: single);
+procedure TGraphicDrawerImpl.VLine(Canvas: TCanvas; AXValue: single);
 var
   xyPoint: TPointF;
   hvPoint: TPointF;
 begin
   xyPoint.x := AXValue;
   xyPoint.y := 0;
-  hvPoint := FViewport.WorldToDevice(xyPoint.x, xyPoint.y);
+  hvPoint := Viewport.WorldToDevice(xyPoint.x, xyPoint.y);
   Canvas.Line(round(hvPoint.x), 0, round(hvPoint.x), Canvas.Height);
 end;
 
 
-procedure TGraphicDrawer.HLine(Canvas: TCanvas; AYValue: single);
+procedure TGraphicDrawerImpl.HLine(Canvas: TCanvas; AYValue: single);
 var
   xyPoint: TPointF;
   hvPoint: TPointF;
 begin
   xyPoint.x := 0;
   xyPoint.y := AYValue;
-  hvPoint := FViewport.WorldToDevice(xyPoint.x, xyPoint.y);
+  hvPoint := Viewport.WorldToDevice(xyPoint.x, xyPoint.y);
   Canvas.Line(0, round(hvPoint.y), Canvas.Width, round(hvPoint.y));
 end;
 

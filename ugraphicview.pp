@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Types, Graphics, UGeometyUtils, UDocument,
   Controls, Menus, ExtCtrls,
-  Dialogs, LCLIntf, UGraphicDrawer;
+  Dialogs, LCLIntf, UGraphicBase;
 
 type
   TTrackingAttributes = record
@@ -164,7 +164,7 @@ begin
   FGraphicDrawer.DrawOn(Canvas, FDocument.GetGraphics);
   Canvas.Pen.Color := clLtGray;
   if ShowExtentBounds then
-    FGraphicDrawer.FrameBoundsOn(Canvas,FDocument.Bounds);
+    FGraphicDrawer.FrameBoundsOn(Canvas, FDocument.Bounds);
 end;
 
 

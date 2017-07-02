@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="8">
+    <Units Count="10">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -81,6 +81,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UGraphicView"/>
       </Unit7>
+      <Unit8>
+        <Filename Value="ugraphic.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UGraphic"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="ugraphicbase.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UGraphicBase"/>
+      </Unit9>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
