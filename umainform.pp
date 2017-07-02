@@ -68,7 +68,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDocument := TDocument.Create;
   FDocument.LoadFromDefault;
-  FGraphicDrawer := TGraphicDrawer.Create(FDocument);
+  FGraphicDrawer := TGraphicDrawer.Create;
   FDocument.OnChange := @DocumentChange;
   ClearAllMenuItem.Enabled := FDocument.ClearAllAction.Enabled;
 
@@ -140,7 +140,7 @@ end;
 
 procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
-  FGraphicDrawer.ShowExtentBounds := not FGraphicDrawer.ShowExtentBounds;
+  FGraphicView.ShowExtentBounds := not FGraphicView.ShowExtentBounds;
   FGraphicView.Invalidate;
 end;
 

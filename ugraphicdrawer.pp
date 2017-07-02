@@ -5,46 +5,37 @@ unit UGraphicDrawer;
 interface
 
 uses
-  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls, fgl,
-  UViewport, UGeometyUtils, UDocument;
+  Classes, SysUtils, Types, Controls, Graphics, ExtCtrls,
+  UViewport, UGeometyUtils, UGraphic;
 
 type
   TGraphicDrawer = class
-    constructor Create(ADocument: TDocument);
+    constructor Create;
 
   private
-    FDocument: TDocument;
     FViewport: TViewport;
     FShowAxisLine: boolean;
-    FShowExtentBounds: boolean;
 
+  public
+    destructor Destroy; override;
+    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
+    property Viewport: TViewport read FViewport;
+    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
     procedure VLine(Canvas: TCanvas; AXValue: single);
     procedure HLine(Canvas: TCanvas; AYValue: single);
     procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
-
-  public
-    destructor Destroy; override;
-    procedure DrawOn(Canvas: TCanvas);
-    procedure FrameExtentBoundsOn(Canvas: TCanvas);
-    property Viewport: TViewport read FViewport;
-    property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
-    property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
   end;
 
 
 implementation
 
-uses
-  UGraphic;
 
 
-constructor TGraphicDrawer.Create(ADocument: TDocument);
+constructor TGraphicDrawer.Create;
 begin
-  FDocument := ADocument;
   FViewport := TViewport.Create;
   FShowAxisLine := True;
-  FShowExtentBounds := False;
   FViewport.ResetWorld;
   FViewport.ResetPortCenter;
 end;
@@ -57,7 +48,7 @@ begin
 end;
 
 
-procedure TGraphicDrawer.DrawOn(Canvas: TCanvas);
+procedure TGraphicDrawer.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
 const
   UNIT_SIZE = 2;
 var
@@ -70,22 +61,13 @@ begin
     VLine(Canvas, 0);
     HLine(Canvas, 0);
   end;
-  for g in FDocument.GetGraphics do
+  for g in AGraphicList do
   begin
     point := g as TPointGraphic;
     FramePointOn(Canvas, point.Origin, UNIT_SIZE);
   end;
-  if ShowExtentBounds then
-    FrameExtentBoundsOn(Canvas);
-
 end;
 
-
-procedure TGraphicDrawer.FrameExtentBoundsOn(Canvas: TCanvas);
-begin
-  Canvas.Pen.Color := clLtGray;
-  FrameBoundsOn(Canvas, FDocument.Bounds);
-end;
 
 
 procedure TGraphicDrawer.FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;

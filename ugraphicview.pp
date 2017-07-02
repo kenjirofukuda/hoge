@@ -5,7 +5,7 @@ unit UGraphicView;
 interface
 
 uses
-  Classes, SysUtils, Types, UGeometyUtils, UDocument,
+  Classes, SysUtils, Types, Graphics, UGeometyUtils, UDocument,
   Controls, Menus, ExtCtrls,
   Dialogs, LCLIntf, UGraphicDrawer;
 
@@ -38,6 +38,8 @@ type
     FGraphicDrawer: TGraphicDrawer;
     FTrackingAttributes: TTrackingAttributes;
     FFirstResizeHandled: boolean;
+
+    FShowExtentBounds: boolean;
     procedure HandleMouseMove(Sender: TObject; Shift: TShiftState; X, Y: integer);
     procedure HandleMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -50,6 +52,7 @@ type
     destructor Destroy; override;
     property Document: TDocument read FDocument write FDocument;
     property GraphicDrawer: TGraphicDrawer read FGraphicDrawer write FGraphicDrawer;
+    property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
   end;
 
 implementation
@@ -158,7 +161,10 @@ procedure TGraphicView.HandlePaint(Sender: TObject);
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
-  FGraphicDrawer.DrawOn(Canvas);
+  FGraphicDrawer.DrawOn(Canvas, FDocument.GetGraphics);
+  Canvas.Pen.Color := clLtGray;
+  if ShowExtentBounds then
+    FGraphicDrawer.FrameBoundsOn(Canvas,FDocument.Bounds);
 end;
 
 
