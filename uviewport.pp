@@ -242,6 +242,8 @@ end;
 
 procedure TViewport.SetWorldBounds(AWorldBounds: TRectangleF);
 begin
+  if not AWorldBounds.IsValid then
+    exit;
   SetWorldBounds(AWorldBounds.Origin.x, AWorldBounds.Origin.y,
     AWorldBounds.Corner.x, AWorldBounds.Corner.y);
 end;
