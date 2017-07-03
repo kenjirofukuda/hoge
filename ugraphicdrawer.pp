@@ -66,6 +66,8 @@ var
   hvOrigin: TPointF;
   hvCorner: TPointF;
 begin
+  if not AWorldBounds.IsValid then
+    exit;
   hvOrigin := Viewport.WorldToDevice(AWorldBounds.Origin.x, AWorldBounds.Origin.y);
   hvCorner := Viewport.WorldToDevice(AWorldBounds.Corner.x, AWorldBounds.Corner.y);
   Canvas.Frame(round(hvOrigin.x), round(hvCorner.y), round(hvCorner.x),

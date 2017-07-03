@@ -20,6 +20,7 @@ type
     function GetCenter: TPointF;
   public
     function Merge(ABounds: TRectangleF): TRectangleF;
+    function IsValid: boolean;
     property Width: single read GetWidth;
     property Height: single read GetHeight;
     property Extent: TPointF read GetExtent;
@@ -94,6 +95,17 @@ begin
   maxX := Max(Corner.x, ABounds.Corner.x);
   maxY := Max(Corner.y, ABounds.Corner.y);
   Result := RectangleF(minX, minY, maxX, maxY);
+end;
+
+
+function TRectangleF.IsValid: boolean;
+begin
+  Result := False;
+  if Origin.x >= Corner.x then
+    exit;
+  if Origin.y >= Corner.y then
+    exit;
+  Result := True;
 end;
 
 
