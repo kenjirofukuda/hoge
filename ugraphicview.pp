@@ -10,12 +10,28 @@ uses
   Dialogs, LCLIntf, UGraphicBase;
 
 type
-  TTrackingAttributes = record
-    MiddleDown: boolean;
-    CurrPoint: TPoint;
-    DownPoint: TPoint;
-    MovePoints: THVPointList;
+  TGraphicView = class;
+
+  TViewTracking = class
+  public
+    constructor Create(AGraphicView: TGraphicView);
+    destructor Destroy; override;
+
+    procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+    procedure TrackMove(Shift: TShiftState; X, Y: integer);
+    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+    procedure TrackWheel(Shift: TShiftState; WheelDelta: integer;
+      MousePos: TPoint; var Handled: boolean);
+  private
+    FMiddleDown: boolean;
+    FCurrPoint: TPoint;
+    FDownPoint: TPoint;
+    FMovePoints: THVPointList;
+    FGraphicView: TGraphicView;
+
+    procedure ViewMove(Shift: TShiftState; X, Y: integer);
   end;
+
 
   TGraphicView = class(TPaintBox)
     constructor Create(AOwner: TComponent); override;
@@ -33,7 +49,7 @@ type
   private
     FDocument: TDocument;
     FGraphicDrawer: TGraphicDrawer;
-    FTrackingAttributes: TTrackingAttributes;
+    FTrackingAttributes: TViewTracking;
     FFirstResizeHandled: boolean;
     FShowExtentBounds: boolean;
     FShowAxisLine: boolean;
@@ -64,12 +80,13 @@ begin
   inherited Create(AOwner);
   FShowExtentBounds := False;
   FShowAxisLine := True;
+  FTrackingAttributes := TViewTracking.Create(self);
 end;
 
 
 destructor TGraphicView.Destroy;
 begin
-  FreeAndNil(FTrackingAttributes.MovePoints);
+  FreeAndNil(FTrackingAttributes);
   inherited Destroy;
 end;
 
@@ -79,84 +96,40 @@ procedure TGraphicView.HandleMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
-  if Button = mbMiddle then
-  begin
-    with FTrackingAttributes do
-    begin
-      MiddleDown := True;
-      DownPoint := Point(X, Y);
-      if MovePoints = nil then
-        MovePoints := THVPointList.Create;
-      MovePoints.Clear;
-    end;
-  end;
+  if Assigned(FTrackingAttributes) then
+    FTrackingAttributes.TrackBegin(Button, Shift, X, Y);
 end;
 
 
 procedure TGraphicView.HandleMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: integer);
-var
-  p1, p2: TPoint;
-  wp1, wp2, moved: TPointF;
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
-  with FTrackingAttributes do
-  begin
-    if not MiddleDown then
-      exit;
-    if DownPoint = Point(X, Y) then
-      exit;
-    CurrPoint := Point(X, Y);
-    MovePoints.Add(CurrPoint);
-    if MovePoints.Count > 2 then
-    begin
-      p1 := MovePoints.Items[MovePoints.Count - 2];
-      p2 := MovePoints.Items[MovePoints.Count - 1];
-      with FGraphicDrawer.Viewport do
-      begin
-        wp1 := DeviceToWorld(p1.x, p1.y);
-        wp2 := DeviceToWorld(p2.x, p2.y);
-      end;
-      moved := wp2 - wp1;
-      FGraphicDrawer.Viewport.OffSetWorldCenter(-moved.x, -moved.y);
-      Invalidate;
-    end;
-  end;
+  if Assigned(FTrackingAttributes) then
+    FTrackingAttributes.TrackMove(Shift, X, Y);
 end;
 
 
 procedure TGraphicView.HandleMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: integer);
-var
-  xyPoint: TPointF;
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
   if not Assigned(FDocument) then
     exit;
-  if Button = mbLeft then
-  begin
-    xyPoint := FGraphicDrawer.Viewport.DeviceToWorld(X, Y);
-    FDocument.AddPoint(xyPoint.x, xyPoint.y);
-  end;
-  FTrackingAttributes.MiddleDown := False;
+  if Assigned(FTrackingAttributes) then
+    FTrackingAttributes.TrackEnd(Button, Shift, X, Y);
 end;
 
 
 procedure TGraphicView.HandleMouseWheel(Sender: TObject; Shift: TShiftState;
   WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
-var
-  direction: single;
 begin
   if not Assigned(FGraphicDrawer) then
     exit;
-  if WheelDelta < 0 then
-    direction := -1.0
-  else
-    direction := 1.0;
-  FGraphicDrawer.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
-  Invalidate;
+  if Assigned(FTrackingAttributes) then
+    FTrackingAttributes.TrackWheel(Shift, WheelDelta, MousePos, Handled);
 end;
 
 
@@ -231,5 +204,94 @@ begin
   inherited DoOnResize;
   HandleResize(Self);
 end;
+
+
+constructor TViewTracking.Create(AGraphicView: TGraphicView);
+begin
+  FGraphicView := AGraphicView;
+  if FMovePoints = nil then
+    FMovePoints := THVPointList.Create;
+  FMovePoints.Clear;
+end;
+
+
+destructor TViewTracking.Destroy;
+begin
+  FreeAndNil(FMovePoints);
+  inherited Destroy;
+end;
+
+
+procedure TViewTracking.ViewMove(Shift: TShiftState; X, Y: integer);
+var
+  p1, p2: TPoint;
+  wp1, wp2, moved: TPointF;
+begin
+  FCurrPoint := Point(X, Y);
+  FMovePoints.Add(FCurrPoint);
+  if FMovePoints.Count > 2 then
+  begin
+    p1 := FMovePoints.Items[FMovePoints.Count - 2];
+    p2 := FMovePoints.Items[FMovePoints.Count - 1];
+    with FGraphicView.GraphicDrawer.Viewport do
+    begin
+      wp1 := DeviceToWorld(p1.x, p1.y);
+      wp2 := DeviceToWorld(p2.x, p2.y);
+      moved := wp2 - wp1;
+      OffSetWorldCenter(-moved.x, -moved.y);
+    end;
+    FGraphicView.Invalidate;
+  end;
+end;
+
+
+procedure TViewTracking.TrackBegin(Button: TMouseButton; Shift: TShiftState;
+  X, Y: integer);
+begin
+  if Button = mbMiddle then
+  begin
+    FMiddleDown := True;
+    FDownPoint := Point(X, Y);
+  end;
+end;
+
+
+procedure TViewTracking.TrackMove(Shift: TShiftState; X, Y: integer);
+begin
+  if not FMiddleDown then
+    exit;
+  if FDownPoint = Point(X, Y) then
+    exit;
+  ViewMove(Shift, X, Y);
+end;
+
+
+procedure TViewTracking.TrackEnd(Button: TMouseButton; Shift: TShiftState;
+  X, Y: integer);
+var
+  xyPoint: TPointF;
+begin
+  if Button = mbLeft then
+  begin
+    xyPoint := FGraphicView.GraphicDrawer.Viewport.DeviceToWorld(X, Y);
+    FGraphicView.Document.AddPoint(xyPoint.x, xyPoint.y);
+  end;
+  FMiddleDown := False;
+end;
+
+
+procedure TViewTracking.TrackWheel(Shift: TShiftState; WheelDelta: integer;
+  MousePos: TPoint; var Handled: boolean);
+var
+  direction: single;
+begin
+  if WheelDelta < 0 then
+    direction := -1.0
+  else
+    direction := 1.0;
+  FGraphicView.GraphicDrawer.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
+  FGraphicView.Invalidate;
+end;
+
 
 end.

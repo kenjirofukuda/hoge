@@ -44,6 +44,7 @@ type
     procedure SetPortHeight(Height: integer);
     procedure SetPortSize(Width, Height: integer);
     procedure SetPortCenter(H, V: integer);
+    function GetPortCenter: TPoint;
     procedure ResetPortCenter;
 
     {World Operations}
@@ -312,5 +313,12 @@ begin
   FPortCenter.y := FPortHeight - V;
   DamageTransform;
 end;
+
+
+function TViewport.GetPortCenter: TPoint;
+begin
+  Result := FPortCenter;
+end;
+
 
 end.
