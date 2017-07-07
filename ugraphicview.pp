@@ -209,7 +209,7 @@ end;
 constructor TViewTracking.Create(AGraphicView: TGraphicView);
 begin
   FGraphicView := AGraphicView;
-  if FMovePoints = nil then
+  if not Assigned(FMovePoints) then
     FMovePoints := THVPointList.Create;
   FMovePoints.Clear;
 end;
@@ -224,7 +224,7 @@ end;
 
 procedure TViewTracking.ViewMove(Shift: TShiftState; X, Y: integer);
 var
-  p1, p2: TPoint;
+  p1, p2, movedDevice: TPoint;
   wp1, wp2, moved: TPointF;
 begin
   FCurrPoint := Point(X, Y);
@@ -233,6 +233,9 @@ begin
   begin
     p1 := FMovePoints.Items[FMovePoints.Count - 2];
     p2 := FMovePoints.Items[FMovePoints.Count - 1];
+    movedDevice := p2 - p1;
+    movedDevice.y := movedDevice.y * -1;
+
     with FGraphicView.GraphicDrawer.Viewport do
     begin
       wp1 := DeviceToWorld(p1.x, p1.y);
