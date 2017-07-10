@@ -13,6 +13,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    PointMenuItem: TMenuItem;
+    SelectMenuItem: TMenuItem;
+    ToolsMenu: TMenuItem;
     StatusBar: TStatusBar;
 
     {Actions}
@@ -41,6 +44,8 @@ type
     {Actions}
     procedure ClearAllActionExecute(Sender: TObject);
     procedure ClearAllActionUpdate(Sender: TObject);
+    procedure PointMenuItemClick(Sender: TObject);
+    procedure SelectMenuItemClick(Sender: TObject);
     procedure ShowAxisLineActionExecute(Sender: TObject);
     procedure ShowAxisLineActionUpdate(Sender: TObject);
     procedure ShowExtentBoundsActionExecute(Sender: TObject);
@@ -114,7 +119,6 @@ begin
   ClearAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
 end;
 
-
 procedure TMainForm.ClearAllActionExecute(Sender: TObject);
 begin
   FDocument.RemoveAllPoints();
@@ -151,6 +155,17 @@ procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
   FGraphicDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
   FGraphicView.Invalidate;
+end;
+
+(* ----- MenuItem handlers ----- *)
+procedure TMainForm.SelectMenuItemClick(Sender: TObject);
+begin
+  FGraphicView.ChooseTool('select');
+end;
+
+procedure TMainForm.PointMenuItemClick(Sender: TObject);
+begin
+ FGraphicView.ChooseTool('point');
 end;
 
 

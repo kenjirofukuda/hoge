@@ -18,6 +18,8 @@ type
 
   public
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); override;
+    function Distance(APoint: TPointF): single; override;
+
     property x: single read FPoint.x write FPoint.x;
     property y: single read FPoint.y write FPoint.y;
     property Origin: TPointF read FPoint;
@@ -55,5 +57,12 @@ begin
   if Selected then
      ACanvas.Pen.Color := savedColor;
 end;
+
+
+function TPointGraphic.Distance(APoint: TPointF): single;
+begin
+  Result := FPoint.Distance(APoint);
+end;
+
 
 end.

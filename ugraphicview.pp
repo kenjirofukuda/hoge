@@ -10,25 +10,8 @@ uses
   Dialogs, LCLIntf, UGraphicBase;
 
 type
-  TGraphicView = class;
-
-  TViewTracking = class
-  public
-    constructor Create(AGraphicView: TGraphicView);
-    destructor Destroy; override;
-
-    procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer); virtual; abstract;
-    procedure TrackMove(Shift: TShiftState; X, Y: integer); virtual; abstract;
-    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer); virtual; abstract;
-    procedure TrackWheel(Shift: TShiftState; WheelDelta: integer;
-      MousePos: TPoint; var Handled: boolean); virtual; abstract;
-  protected
-    FMiddleDown: boolean;
-    FCurrPoint: TPoint;
-    FDownPoint: TPoint;
-    FMovePoints: THVPointList;
-    FGraphicView: TGraphicView;
-  end;
+  TViewTracking = class;
+  TToolMap = specialize TFPGMap<string, TViewTracking>;
 
 
   TGraphicView = class(TPaintBox)
@@ -51,6 +34,7 @@ type
     FFirstResizeHandled: boolean;
     FShowExtentBounds: boolean;
     FShowAxisLine: boolean;
+    FToolMap: TToolMap;
 
     procedure HandleMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: integer);
@@ -62,15 +46,38 @@ type
     procedure HandlePaint(Sender: TObject);
     procedure HandleResize(Sender: TObject);
 
+    procedure InstallTools;
+
   public
     destructor Destroy; override;
+
+    procedure ChooseTool(toolName: string);
+
     property Document: TDocument read FDocument write FDocument;
     property GraphicDrawer: TGraphicDrawer read FGraphicDrawer write FGraphicDrawer;
     property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
     property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
+
   end;
 
-  TToolMap = specialize TFPGMap<string, TViewTracking>;
+  TViewTracking = class
+  public
+    constructor Create(AGraphicView: TGraphicView);
+    destructor Destroy; override;
+
+    procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer); virtual; abstract;
+    procedure TrackMove(Shift: TShiftState; X, Y: integer); virtual; abstract;
+    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer); virtual; abstract;
+    procedure TrackWheel(Shift: TShiftState; WheelDelta: integer;
+      MousePos: TPoint; var Handled: boolean); virtual; abstract;
+  protected
+    FMiddleDown: boolean;
+    FCurrPoint: TPoint;
+    FDownPoint: TPoint;
+    FMovePoints: THVPointList;
+    FGraphicView: TGraphicView;
+  end;
+
 
 implementation
 
@@ -83,13 +90,30 @@ begin
   FShowExtentBounds := False;
   FShowAxisLine := True;
   FViewTracking := TPointTool.Create(self);
+  FToolMap := TToolMap.Create;
+  InstallTools;
+  ChooseTool('select');
 end;
 
 
 destructor TGraphicView.Destroy;
 begin
-  FreeAndNil(FViewTracking);
+  FViewTracking := nil;
+  FreeAndNil(FToolMap);
   inherited Destroy;
+end;
+
+
+procedure TGraphicView.InstallTools;
+begin
+  FToolMap.Add('select', TSelectTool.Create(self));
+  FToolMap.Add('point', TPointTool.Create(self));
+end;
+
+
+procedure TGraphicView.ChooseTool(toolName: string);
+begin
+  FViewTracking := FToolMap.KeyData[toolName];
 end;
 
 

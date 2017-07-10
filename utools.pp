@@ -2,6 +2,7 @@ unit UTools;
 
 {$mode objfpc}{$H+}
 
+
 interface
 
 uses
@@ -10,9 +11,11 @@ uses
 type
   TViewTrackingImpl = class(TViewTracking)
   public
-    procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure TrackBegin(Button: TMouseButton; Shift: TShiftState;
+      X, Y: integer); override;
     procedure TrackMove(Shift: TShiftState; X, Y: integer); override;
-    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
+      X, Y: integer); override;
     procedure TrackWheel(Shift: TShiftState; WheelDelta: integer;
       MousePos: TPoint; var Handled: boolean); override;
   private
@@ -22,11 +25,20 @@ type
 
 type
   TPointTool = class(TViewTrackingImpl)
-    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer); override;
+    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
+      X, Y: integer); override;
+  end;
+
+  TSelectTool = class(TViewTrackingImpl)
+    procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
+      X, Y: integer); override;
   end;
 
 
 implementation
+
+uses UGraphicBase;
+
 
 procedure TViewTrackingImpl.ViewMove(Shift: TShiftState; X, Y: integer);
 var
@@ -51,8 +63,8 @@ begin
 end;
 
 
-procedure TViewTrackingImpl.TrackBegin(Button: TMouseButton; Shift: TShiftState;
-  X, Y: integer);
+procedure TViewTrackingImpl.TrackBegin(Button: TMouseButton;
+  Shift: TShiftState; X, Y: integer);
 begin
   if Button = mbMiddle then
   begin
@@ -96,8 +108,7 @@ begin
 end;
 
 
-procedure TPointTool.TrackEnd(Button: TMouseButton; Shift: TShiftState;
-  X, Y: integer);
+procedure TPointTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   xyPoint: TPointF;
 begin
@@ -109,5 +120,24 @@ begin
   end;
 end;
 
+
+procedure TSelectTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+var
+  xyPoint: TPointF;
+  g: TGraphic;
+begin
+  inherited;
+  if Button = mbLeft then
+  begin
+    xyPoint := FGraphicView.GraphicDrawer.Viewport.DeviceToWorld(X, Y);
+    g := FGraphicView.Document.FindGraphicAt(xyPoint, 5,
+      FGraphicView.GraphicDrawer.Viewport.WorldScale);
+    if g <> nil then
+    begin
+      g.Selected := not g.Selected;
+      FGraphicView.Invalidate;
+    end;
+  end;
+end;
 
 end.

@@ -33,6 +33,17 @@ object MainForm: TMainForm
         Action = ViewFitAction
       end
     end
+    object ToolsMenu: TMenuItem
+      Caption = 'Tools'
+      object SelectMenuItem: TMenuItem
+        Caption = 'Select'
+        OnClick = SelectMenuItemClick
+      end
+      object PointMenuItem: TMenuItem
+        Caption = 'Point'
+        OnClick = PointMenuItemClick
+      end
+    end
     object DebugMenu: TMenuItem
       Caption = 'Debug'
       object RevealAppConfigDirMenuItem: TMenuItem

@@ -1,6 +1,8 @@
 unit UDocument;
 
 {$mode objfpc}{$H+}
+{$MODESWITCH ADVANCEDRECORDS}
+
 
 interface
 
@@ -29,6 +31,8 @@ type
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
     procedure AddGraphic(AGraphic: TGraphic);
+    function FindGraphicAt(APoint: TPointF; ARadius: longint;
+      AViewScale: single): TGraphic;
     procedure RemoveAllPoints();
     function GetGraphics: TGraphicList;
     procedure SaveToDefault;
@@ -46,6 +50,23 @@ function AppConfigFilePath: String;
 
 
 implementation
+
+uses Math;
+
+type
+  TGraphicDistance = record
+    FGraphic: TGraphic;
+    FDistance: single;
+    class operator = (a, b : TGraphicDistance) : Boolean;
+  end;
+
+
+  TGraphicDistanceList = specialize TFPGList<TGraphicDistance>;
+
+class operator TGraphicDistance.= (a, b : TGraphicDistance) : Boolean;
+begin
+  result:=(a.FGraphic = b.FGraphic)  and SameValue(a.FDistance, b.FDistance);
+end;
 
 
 constructor TDocument.Create;
@@ -205,6 +226,43 @@ end;
 procedure TDocument.LoadFromDefault;
 begin
   LoadFromFile(AppConfigFilePath);
+end;
+
+
+function distanceCompare(const a, b: TGraphicDistance): integer;
+begin
+  if SameValue(a.FDistance, b.FDistance) then
+    Result := 0
+  else if a.FDistance < b.FDistance then
+    Result := -1
+  else
+    Result := 1;
+end;
+
+
+function TDocument.FindGraphicAt(APoint: TPointF; ARadius: longint;
+  AViewScale: single): TGraphic;
+var
+  g: TGraphic;
+  graphicDistance: TGraphicDistance;
+  distanceList: TGraphicDistanceList;
+
+begin
+  Result := nil;
+  distanceList := TGraphicDistanceList.Create;
+  for g in FGraphicList do
+  begin
+    graphicDistance.FGraphic := g;
+    graphicDistance.FDistance := g.Distance(APoint);
+    distanceList.Add(graphicDistance);
+  end;
+  distanceList.Sort(@distanceCompare);
+  graphicDistance := distanceList.First;
+  distanceList.Free;
+  if graphicDistance.FDistance <= (ARadius / AViewScale) then
+    Result := graphicDistance.FGraphic
+  else
+    Result := nil;
 end;
 
 

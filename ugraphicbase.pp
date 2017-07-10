@@ -35,6 +35,7 @@ type
       FSelected: Boolean;
     public
       procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
+      function Distance(APoint: TPointF): single;  virtual; abstract;
       property Selected: Boolean read FSelected write FSelected;
   end;
 
