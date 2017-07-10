@@ -18,10 +18,10 @@ type
   public
     procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); override;
     procedure DrawAxisLineOn(Canvas: TCanvas); override;
-
     procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF;
       AUnitSize: integer); override;
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF); override;
+    procedure FillHandle(Canvas: TCanvas; At: TPointF); override;
   end;
 
 
@@ -96,6 +96,21 @@ begin
   xyPoint.y := AYValue;
   hvPoint := Viewport.WorldToDevice(xyPoint.x, xyPoint.y);
   Canvas.Line(0, round(hvPoint.y), Canvas.Width, round(hvPoint.y));
+end;
+
+
+procedure TGraphicDrawerImpl.FillHandle(Canvas: TCanvas; At: TPointF);
+var
+  i: longint;
+  hvPoint: TPointF;
+  r: TRect;
+  savedColor: TColor;
+begin
+  i := 4;
+  hvPoint := Viewport.WorldToDevice(At.x, At.y);
+  r := Rect(round(hvPoint.x) - i, round(hvPoint.y) - i, round(hvPoint.x) +
+    i, round(hvPoint.y) + i);
+  Canvas.FillRect(r);
 end;
 
 end.

@@ -13,7 +13,8 @@ type
 
   TGraphicList = specialize TFPGObjectList<TGraphic>;
 
-  TGraphicDrawer = class abstract
+  TGraphicDrawer = class
+    abstract
     constructor Create; virtual;
 
   private
@@ -27,16 +28,19 @@ type
       virtual; abstract;
     procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
       virtual; abstract;
+    procedure FillHandle(Canvas: TCanvas; At: TPointF); virtual; abstract;
+
     property Viewport: TViewport read FViewport;
   end;
 
-  TGraphic = class abstract
-    private
-      FSelected: Boolean;
-    public
-      procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
-      function Distance(APoint: TPointF): single;  virtual; abstract;
-      property Selected: Boolean read FSelected write FSelected;
+  TGraphic = class
+    abstract
+  private
+    FSelected: boolean;
+  public
+    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
+    function Distance(APoint: TPointF): single; virtual; abstract;
+    property Selected: boolean read FSelected write FSelected;
   end;
 
 

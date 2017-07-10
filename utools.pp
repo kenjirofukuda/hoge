@@ -122,6 +122,8 @@ end;
 
 
 procedure TSelectTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+const
+  SENSOR_RADIUS = 7;
 var
   xyPoint: TPointF;
   g: TGraphic;
@@ -130,7 +132,7 @@ begin
   if Button = mbLeft then
   begin
     xyPoint := FGraphicView.GraphicDrawer.Viewport.DeviceToWorld(X, Y);
-    g := FGraphicView.Document.FindGraphicAt(xyPoint, 5,
+    g := FGraphicView.Document.FindGraphicAt(xyPoint, SENSOR_RADIUS,
       FGraphicView.GraphicDrawer.Viewport.WorldScale);
     if g <> nil then
     begin

@@ -28,6 +28,9 @@ type
 
 implementation
 
+uses
+  FPCanvas;
+
 
 constructor TPointGraphic.Create(APoint: TPointF);
 begin
@@ -50,12 +53,15 @@ var
 begin
   if Selected then
   begin
-    savedColor := ACanvas.Pen.Color;
-    ACanvas.Pen.Color := clRed;
+    savedColor := ACanvas.Brush.Color;
   end;
   ADrawer.FramePointOn(ACanvas, Origin, UNIT_SIZE);
   if Selected then
-     ACanvas.Pen.Color := savedColor;
+  begin
+    ACanvas.Brush.Color := clBlue;
+    ADrawer.FillHandle(ACanvas, Origin);
+    ACanvas.Brush.Color := savedColor;
+  end;
 end;
 
 
