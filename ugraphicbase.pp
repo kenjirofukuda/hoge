@@ -31,7 +31,11 @@ type
   end;
 
   TGraphic = class abstract
-    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
+    private
+      FSelected: Boolean;
+    public
+      procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
+      property Selected: Boolean read FSelected write FSelected;
   end;
 
 

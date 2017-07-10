@@ -43,8 +43,17 @@ end;
 procedure TPointGraphic.DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer);
 const
   UNIT_SIZE = 2;
+var
+  savedColor: TColor;
 begin
+  if Selected then
+  begin
+    savedColor := ACanvas.Pen.Color;
+    ACanvas.Pen.Color := clRed;
+  end;
   ADrawer.FramePointOn(ACanvas, Origin, UNIT_SIZE);
+  if Selected then
+     ACanvas.Pen.Color := savedColor;
 end;
 
 end.

@@ -65,6 +65,7 @@ type
     function DeviceToWorld(H, V: single): TPointF;
     procedure WheelZoom(H, V: integer; X, Y: single; Direction: single);
     procedure WheelZoom(H, V: integer; Direction: single);
+    property PortHeight: longint read FPortHeight;
   end;
 
 
@@ -156,7 +157,7 @@ var
   tx: TAffineMatrix;
 begin
   tx := AffineMatrixIdentity;
-  tx *= AffineMatrixTranslation(FPortCenter.x, FPortHeight - FPortCenter.y);
+  tx *= AffineMatrixTranslation(FPortCenter.x, (FPortHeight - FPortCenter.y));
   tx *= AffineMatrixScale(FWorldScale, -FWorldScale);
   tx *= AffineMatrixTranslation(-FWorldCenter.x, -FWorldCenter.y);
   Result := tx;
