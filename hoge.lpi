@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="12">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -96,6 +96,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="UTools"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="uundomanager.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UUndoManager"/>
+      </Unit11>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
