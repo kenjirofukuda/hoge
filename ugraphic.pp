@@ -54,14 +54,11 @@ begin
   if Selected then
   begin
     savedColor := ACanvas.Brush.Color;
-  end;
-  ADrawer.FramePointOn(ACanvas, Origin, UNIT_SIZE);
-  if Selected then
-  begin
     ACanvas.Brush.Color := clBlue;
     ADrawer.FillHandle(ACanvas, Origin);
     ACanvas.Brush.Color := savedColor;
   end;
+  ADrawer.FramePointOn(ACanvas, Origin, UNIT_SIZE);
 end;
 
 

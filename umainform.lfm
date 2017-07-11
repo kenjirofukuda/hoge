@@ -23,8 +23,17 @@ object MainForm: TMainForm
     top = 16
     object EditMenu: TMenuItem
       Caption = 'Edit'
-      object ClearAllMenuItem: TMenuItem
-        Action = ClearAllAction
+      object ClearMenuItem: TMenuItem
+        Action = ClearAction
+      end
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
+      object SelectAllMenuItem: TMenuItem
+        Action = SelectAllAction
+      end
+      object DeselectAllMenuItem: TMenuItem
+        Action = DeselectAllAction
       end
     end
     object ViewMenu: TMenuItem
@@ -82,10 +91,22 @@ object MainForm: TMainForm
       Caption = 'Fit'
       OnExecute = ViewFitActionExecute
     end
-    object ClearAllAction: TAction
-      Caption = 'Clear All'
-      OnExecute = ClearAllActionExecute
-      OnUpdate = ClearAllActionUpdate
+    object ClearAction: TAction
+      Category = 'Edit'
+      Caption = 'Clear'
+      OnExecute = ClearActionExecute
+      OnUpdate = ClearActionUpdate
+    end
+    object SelectAllAction: TAction
+      Category = 'Edit'
+      Caption = 'Select All'
+      OnExecute = SelectAllActionExecute
+      OnUpdate = SelectAllActionUpdate
+    end
+    object DeselectAllAction: TAction
+      Caption = 'Deselect All'
+      OnExecute = DeselectAllActionExecute
+      OnUpdate = DeselectAllActionUpdate
     end
   end
 end

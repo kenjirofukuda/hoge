@@ -13,6 +13,8 @@ goal: gdsfeel-lazarus or LazDraw.
 
 latest change at first.
 
+- add: [Edit][Select All], [Deselect All]
+- change: [Edit][Clear All] -> [Clear]
 - implement [View][Fit]
 - implement [Debug][Show Extent bounds]
 - implement [Debug][Show Axis line]
@@ -32,8 +34,6 @@ latest change at first.
 * Viewing
 	* zooming limit for safety.
 
-* Edit
-	* add graphics element selectability.	
 * Element Kind
 	* Segment
 
@@ -45,7 +45,4 @@ latest change at first.
    * [File][Save As...]. save at any location.
    * AppConfigDir (current) 
   
-* Referctering
-  * mouse tracking operations.
-
 * Unit Test

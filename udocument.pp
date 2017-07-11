@@ -26,6 +26,7 @@ type
     procedure UnlockChange;
     procedure Change;
     function GetBounds: TRectangleF;
+    function GetSelectedCount: longint;
 
   public
     destructor Destroy; override;
@@ -33,7 +34,12 @@ type
     procedure AddGraphic(AGraphic: TGraphic);
     function FindGraphicAt(APoint: TPointF; ARadius: longint;
       AViewScale: single): TGraphic;
-    procedure RemoveAllPoints();
+
+    procedure SetAllSelected(State: Boolean);
+    procedure RemoveAllGraphic;
+    procedure RemoveGraphics(AGraphicList: TGraphicList);
+    procedure RemoveSelectedGraphic;
+    function GetSelectedGraphics: TGraphicList;
     function GetGraphics: TGraphicList;
     procedure SaveToDefault;
     procedure LoadFromDefault;
@@ -41,6 +47,7 @@ type
   public
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property Bounds: TRectangleF read GetBounds;
+    property SelectedCount: longint read GetSelectedCount;
   end;
 
 
@@ -131,10 +138,77 @@ begin
 end;
 
 
-procedure TDocument.RemoveAllPoints;
+function TDocument.GetSelectedGraphics: TGraphicList;
+var
+  g: TGraphic;
 begin
-  FGraphicList.Clear;
+  Result := TGraphicList.Create;
+  for g in FGraphicList do
+  begin
+    if g.Selected then
+       Result.Add(g);
+  end;
+end;
+
+
+function TDocument.GetSelectedCount: longint;
+var
+  g: TGraphic;
+begin
+  Result := 0;
+  for g in FGraphicList do
+  begin
+    if g.Selected then
+       inc(Result);
+  end;
+end;
+
+
+procedure TDocument.RemoveGraphics(AGraphicList: TGraphicList);
+var
+  g: TGraphic;
+begin
+  for g in AGraphicList do
+  begin
+    if g.Selected then
+       FGraphicList.Remove(g);
+  end;
   Change;
+end;
+
+
+procedure TDocument.RemoveAllGraphic;
+var
+  selectedGraphics: TGraphicList;
+begin
+  SetAllSelected(true);
+  RemoveSelectedGraphic;
+end;
+
+
+procedure TDocument.SetAllSelected(State: Boolean);
+var
+  g: TGraphic;
+begin
+  for g in FGraphicList do
+  begin
+    g.Selected := State;
+  end;
+  Change;
+end;
+
+
+procedure TDocument.RemoveSelectedGraphic;
+var
+  selectedGraphics: TGraphicList;
+begin
+  // TODO: each Graphic Free
+  selectedGraphics := GetSelectedGraphics;
+  try
+    RemoveGraphics(selectedGraphics);
+  finally
+    //selectedGraphics.Free;
+  end;
 end;
 
 

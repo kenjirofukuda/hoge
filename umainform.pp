@@ -13,6 +13,11 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    DeselectAllAction: TAction;
+    MenuItem2: TMenuItem;
+    SelectAllMenuItem: TMenuItem;
+    DeselectAllMenuItem: TMenuItem;
+    SelectAllAction: TAction;
     PointMenuItem: TMenuItem;
     SelectMenuItem: TMenuItem;
     ToolsMenu: TMenuItem;
@@ -20,7 +25,7 @@ type
 
     {Actions}
     ActionList: TActionList;
-    ClearAllAction: TAction;
+    ClearAction: TAction;
     ViewFitAction: TAction;
     ShowExtentBoundsAction: TAction;
     ShowAxisLineAction: TAction;
@@ -28,7 +33,7 @@ type
     MainMenu: TMainMenu;
     {[Edit}
     EditMenu: TMenuItem;
-    ClearAllMenuItem: TMenuItem;
+    ClearMenuItem: TMenuItem;
 
     {[View}
     ViewMenu: TMenuItem;
@@ -42,9 +47,13 @@ type
     ShowAxisLineMenuItem: TMenuItem;
 
     {Actions}
-    procedure ClearAllActionExecute(Sender: TObject);
-    procedure ClearAllActionUpdate(Sender: TObject);
+    procedure DeselectAllActionExecute(Sender: TObject);
+    procedure DeselectAllActionUpdate(Sender: TObject);
+    procedure SelectAllActionExecute(Sender: TObject);
+    procedure ClearActionExecute(Sender: TObject);
+    procedure ClearActionUpdate(Sender: TObject);
     procedure PointMenuItemClick(Sender: TObject);
+    procedure SelectAllActionUpdate(Sender: TObject);
     procedure SelectMenuItemClick(Sender: TObject);
     procedure ShowAxisLineActionExecute(Sender: TObject);
     procedure ShowAxisLineActionUpdate(Sender: TObject);
@@ -114,14 +123,39 @@ end;
 
 
 (* ----- Actions ----- *)
-procedure TMainForm.ClearAllActionUpdate(Sender: TObject);
+procedure TMainForm.ClearActionUpdate(Sender: TObject);
 begin
-  ClearAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
+  ClearMenuItem.Enabled := FDocument.SelectedCount > 0;
 end;
 
-procedure TMainForm.ClearAllActionExecute(Sender: TObject);
+
+procedure TMainForm.ClearActionExecute(Sender: TObject);
 begin
-  FDocument.RemoveAllPoints();
+  FDocument.RemoveSelectedGraphic;
+end;
+
+
+procedure TMainForm.SelectAllActionUpdate(Sender: TObject);
+begin
+  SelectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
+end;
+
+
+procedure TMainForm.SelectAllActionExecute(Sender: TObject);
+begin
+  FDocument.SetAllSelected(True);
+end;
+
+
+procedure TMainForm.DeselectAllActionUpdate(Sender: TObject);
+begin
+  DeselectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
+end;
+
+
+procedure TMainForm.DeselectAllActionExecute(Sender: TObject);
+begin
+  FDocument.SetAllSelected(False);
 end;
 
 
@@ -163,10 +197,12 @@ begin
   FGraphicView.ChooseTool('select');
 end;
 
+
 procedure TMainForm.PointMenuItemClick(Sender: TObject);
 begin
- FGraphicView.ChooseTool('point');
+  FGraphicView.ChooseTool('point');
 end;
+
 
 
 (* ----- Events ----- *)
