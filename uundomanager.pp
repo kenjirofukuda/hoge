@@ -5,16 +5,17 @@ unit UUndoManager;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils, contnrs;
 
 const
   MAX_HISTORY_SIZE = 9999;
 
 type
   TUndoRedoGroup = class;
+  THistoryLeaf = class;
+
 
   THistoryIterator = class
-
   private
     FRecorder: TUndoRedoGroup;
     FPlugged: Boolean;
@@ -25,8 +26,6 @@ type
     function GetRecorder: TUndoRedoGroup;
     function GetSize: longint;
 
-    function HasNext: Boolean;
-    function HasPrevious: Boolean;
     function Next: THistoryLeaf;
     function Previous: THistoryLeaf;
 
@@ -34,9 +33,6 @@ type
     procedure Reset;
     procedure RemoveFirst;
 
-    procedure DoIt;
-    procedure Redo;
-    procedure Undo;
 
   public
     constructor Create;
@@ -44,8 +40,15 @@ type
     procedure OpenGroup;
     procedure CloseGroup;
 
+    function HasNext: Boolean;
+    function HasPrevious: Boolean;
+    function DoIt: Boolean;
+    function Redo: Boolean;
+    function Undo: Boolean;
+
 
     property Recorder: TUndoRedoGroup read GetRecorder;
+    property Current: THistoryLeaf read GetCurrent;
   end;
 
 
@@ -54,18 +57,18 @@ type
     function Opend: boolean; virtual;
     function IsComposit: boolean; virtual;
     function AddItem(ANHistoryItem: THistoryLeaf): boolean; virtual;
-    procedure DoIt; virtual; abstract;
-    procedure Redo; virtual; abstract;
-    procedure Undo; virtual; abstract;
+    function DoIt: Boolean; virtual; abstract;
+    function Redo: Boolean ; virtual; abstract;
+    function Undo: Boolean ; virtual; abstract;
   end;
 
 
   THistoryNode = class(THistoryLeaf)
   private
     FOpend: boolean;
-    FHistory: TList;
+    FHistory: TObjectList;
 
-    function GetHistory: TList;
+    function GetHistory: TObjectList;
     function GetCurrent: THistoryLeaf;
 
   public
@@ -78,8 +81,8 @@ type
     function Opend: boolean; override;
     function AddItem(ANHistoryItem: THistoryLeaf): boolean; override;
 
-    property History: TList read GetHistory;
-    property Curent: THistoryLeaf read GetCurrent
+    property History: TObjectList read GetHistory;
+    property Curent: THistoryLeaf read GetCurrent;
 
 
     procedure RemoveFirst;
@@ -90,9 +93,9 @@ type
 
   TUndoRedoGroup = class(THistoryNode)
   public
-    procedure DoIt; override;
-    procedure Redo; override;
-    procedure Undo; override;
+    function DoIt: Boolean; override;
+    function Redo: Boolean; override;
+    function Undo: Boolean; override;
   end;
 
 
@@ -101,9 +104,9 @@ type
     FRedo: TNotifyEvent;
     FUndo: TNotifyEvent;
   public
-    procedure DoIt; override;
-    procedure Redo; override;
-    procedure Undo; override;
+    function DoIt: Boolean; override;
+    function Redo: Boolean; override;
+    function Undo: Boolean; override;
 
     property OnDoIt: TNotifyEvent read FRedo write FRedo;
     property OnRedo: TNotifyEvent read FRedo write FRedo;
@@ -120,12 +123,12 @@ begin
   FPlugged := true;
 end;
 
-procedure THistoryIterator.DoIt;
+function THistoryIterator.DoIt: Boolean;
 begin
-  Redo;
+  Result := Redo;
 end;
 
-procedure THistoryIterator.Redo;
+function THistoryIterator.Redo: Boolean;
 var
   savedPlugged: Boolean;
 begin
@@ -144,7 +147,7 @@ begin
 end;
 
 
-procedure THistoryIterator.Undo;
+function THistoryIterator.Undo: Boolean;
 var
   savedPlugged: Boolean;
 begin
@@ -173,20 +176,23 @@ end;
 
 function THistoryIterator.HasNext: Boolean;
 begin
-  Result := (GetRecorder.History.Count - GetIndex) > 1;
+  Result := (GetRecorder.History.Count - FIndex) > 1;
 end;
 
 
 function THistoryIterator.HasPrevious: Boolean;
 begin
-  Result := GetIndex >= 0;
+  Result := FIndex >= 0;
 end;
 
 
 function THistoryIterator.Next: THistoryLeaf;
 begin
   if HasNext then
-    Result := FIndex = GetIndex + 1;
+  begin
+    FIndex := FIndex + 1;
+    Result := GetCurrent;
+  end
   else
     Result := nil;
 end;
@@ -195,7 +201,10 @@ end;
 function THistoryIterator.Previous: THistoryLeaf;
 begin
   if HasPrevious then
-    Result := FIndex = GetIndex - 1;
+  begin
+    FIndex := FIndex - 1;
+    Result := GetCurrent;
+  end
   else
     Result := nil;
 end;
@@ -216,8 +225,8 @@ end;
 
 function THistoryIterator.GetCurrent: THistoryLeaf;
 begin
-  if GetIndex < GetSize and FIndex >= 0 then
-    Result := GetRecorder.History[GetIndex]
+  if (FIndex < GetSize) and (FIndex >= 0) then
+    Result := THistoryLeaf(GetRecorder.History[FIndex])
   else
     Result := nil;
 end;
@@ -239,7 +248,7 @@ end;
 
 function THistoryIterator.GetSize: longint;
 begin
-  Result := GetRecorder.Size;
+  Result := GetRecorder.GetHistory.Count;
 end;
 
 
@@ -308,7 +317,7 @@ end;
 
 function THistoryNode.OpenGroup:Boolean;
 begin
-  Result := AddItem(THistoryNode.Create);
+  Result := AddItem(TUndoRedoGroup.Create);
 end;
 
 procedure THistoryNode.CloseGroup;
@@ -317,17 +326,17 @@ begin
      if GetCurrent.IsComposit then
          if GetCurrent.Opend then
          begin
-            GetCurrent.CloseGroup
+            THistoryNode(GetCurrent).CloseGroup;
             exit;
          end;
   CLose
 end;
 
 
-function THistoryNode.GetHistory: TList;
+function THistoryNode.GetHistory: TObjectList;
 begin
   if not Assigned(FHistory) then
-    FHistory := TList.Create;
+    FHistory := TObjectList.Create;
   Result := FHistory;
 end;
 
@@ -380,14 +389,14 @@ begin
 end;
 
 
-procedure TUndoRedoGroup.DoIt;
+function TUndoRedoGroup.DoIt: Boolean;
 begin
-  Redo;
+  Result := Redo;
 end;
 
-procedure TUndoRedoGroup.Redo;
+function TUndoRedoGroup.Redo: Boolean;
 var
-  each: TObject;
+  each: Pointer;
   node: TUndoRedoGroup;
 begin
   for each in GetHistory do
@@ -395,36 +404,41 @@ begin
     node := TUndoRedoGroup(each);
     node.Redo;
   end;
+  Result := true
 end;
 
 
-procedure TUndoRedoGroup.Undo;
+function TUndoRedoGroup.Undo: Boolean;
 var
   each: TObject;
   node: TUndoRedoGroup;
+  i: longint;
 begin
-  for i = GetHistory.Count - 1 downto 0 do
+  for i := GetHistory.Count - 1 downto 0 do
   begin
-    each = GetHistory[i]
-    node := TUndoRedoGroup(each);
+    each := GetHistory[i];
+    node := each as TUndoRedoGroup;
     node.Undo;
   end;
+  Result := true;
 end;
 
 
-procedure TUndoRedoRecord.DoIt;
+function TUndoRedoRecord.DoIt: Boolean;
 begin
-  Redo;
+  Result := Redo;
 end;
 
-procedure TUndoRedoRecord.Redo;
+function TUndoRedoRecord.Redo: Boolean;
 begin
+  Result := false;
   if Assigned(FRedo) then
      FRedo(self);
 end;
 
-procedure TUndoRedoRecord.Undo;
+function TUndoRedoRecord.Undo: Boolean;
 begin
+  Result := false;
   if Assigned(FUndo) then
      FUndo(Self);
 end;

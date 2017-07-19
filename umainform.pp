@@ -7,14 +7,19 @@ interface
 uses
   Classes, SysUtils, Types, UDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, ActnList, UGraphicBase, UGraphicView;
+  Dialogs, LCLIntf, ActnList, StdCtrls, UGraphicBase, UGraphicView;
 
 type
   { TMainForm }
 
   TMainForm = class(TForm)
+    RedoAction: TAction;
+    UndoAction: TAction;
     DeselectAllAction: TAction;
     MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    RedoMenuItem: TMenuItem;
+    UndoMenuItem: TMenuItem;
     SelectAllMenuItem: TMenuItem;
     DeselectAllMenuItem: TMenuItem;
     SelectAllAction: TAction;
@@ -49,6 +54,8 @@ type
     {Actions}
     procedure DeselectAllActionExecute(Sender: TObject);
     procedure DeselectAllActionUpdate(Sender: TObject);
+    procedure RedoActionExecute(Sender: TObject);
+    procedure RedoActionUpdate(Sender: TObject);
     procedure SelectAllActionExecute(Sender: TObject);
     procedure ClearActionExecute(Sender: TObject);
     procedure ClearActionUpdate(Sender: TObject);
@@ -58,6 +65,8 @@ type
     procedure ShowAxisLineActionExecute(Sender: TObject);
     procedure ShowAxisLineActionUpdate(Sender: TObject);
     procedure ShowExtentBoundsActionExecute(Sender: TObject);
+    procedure UndoActionExecute(Sender: TObject);
+    procedure UndoActionUpdate(Sender: TObject);
     procedure ViewFitActionExecute(Sender: TObject);
     procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
 
@@ -152,6 +161,17 @@ begin
   DeselectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
 end;
 
+procedure TMainForm.RedoActionExecute(Sender: TObject);
+begin
+  FDocument.UndoManager.Redo;
+end;
+
+procedure TMainForm.RedoActionUpdate(Sender: TObject);
+begin
+  UndoAction.Enabled := FDocument.UndoManager.HasNext;
+end;
+
+
 
 procedure TMainForm.DeselectAllActionExecute(Sender: TObject);
 begin
@@ -182,6 +202,17 @@ procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
   FGraphicView.ShowExtentBounds := not FGraphicView.ShowExtentBounds;
   FGraphicView.Invalidate;
+end;
+
+procedure TMainForm.UndoActionExecute(Sender: TObject);
+begin
+  FDocument.UndoManager.Undo;
+end;
+
+
+procedure TMainForm.UndoActionUpdate(Sender: TObject);
+begin
+  UndoAction.Enabled := FDocument.UndoManager.Current <> nil;
 end;
 
 

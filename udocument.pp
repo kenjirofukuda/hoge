@@ -8,7 +8,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl,
-  UGeometyUtils, UGraphicBase, UGraphic;
+  UGeometyUtils, UGraphicBase, UGraphic, UUndoManager;
 
 type
 
@@ -20,6 +20,8 @@ type
     FOnChange: TNotifyEvent;
     FLockChange: boolean;
     FLockCount: longint;
+    FUndoManager: THistoryIterator;
+
     procedure SaveToFile(APath: String);
     procedure LoadFromFile(APath: String);
     procedure LockChange;
@@ -48,6 +50,7 @@ type
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property Bounds: TRectangleF read GetBounds;
     property SelectedCount: longint read GetSelectedCount;
+    property UndoManager: THistoryIterator read FUndoManager;
   end;
 
 
@@ -81,6 +84,7 @@ begin
   inherited;
   FGraphicList := TGraphicList.Create;
   FLockChange := False;
+  FUndoManager := THistoryIterator.Create;
 end;
 
 

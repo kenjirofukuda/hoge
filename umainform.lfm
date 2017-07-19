@@ -23,6 +23,16 @@ object MainForm: TMainForm
     top = 16
     object EditMenu: TMenuItem
       Caption = 'Edit'
+      object UndoMenuItem: TMenuItem
+        Action = UndoAction
+      end
+      object RedoMenuItem: TMenuItem
+        Action = RedoAction
+      end
+      object MenuItem3: TMenuItem
+        Caption = '-'
+        Enabled = False
+      end
       object ClearMenuItem: TMenuItem
         Action = ClearAction
       end
@@ -76,6 +86,7 @@ object MainForm: TMainForm
     left = 557
     top = 152
     object ShowAxisLineAction: TAction
+      Category = 'Debug'
       AutoCheck = True
       Caption = 'Show Axis line'
       HelpType = htKeyword
@@ -83,6 +94,7 @@ object MainForm: TMainForm
       OnUpdate = ShowAxisLineActionUpdate
     end
     object ShowExtentBoundsAction: TAction
+      Category = 'Debug'
       Caption = 'Show Extent bounds'
       OnExecute = ShowExtentBoundsActionExecute
     end
@@ -104,9 +116,24 @@ object MainForm: TMainForm
       OnUpdate = SelectAllActionUpdate
     end
     object DeselectAllAction: TAction
+      Category = 'Edit'
       Caption = 'Deselect All'
       OnExecute = DeselectAllActionExecute
       OnUpdate = DeselectAllActionUpdate
+    end
+    object UndoAction: TAction
+      Category = 'Edit'
+      Caption = 'Undo'
+      OnExecute = UndoActionExecute
+      OnUpdate = UndoActionUpdate
+      ShortCut = 4186
+    end
+    object RedoAction: TAction
+      Category = 'Edit'
+      Caption = 'Redo'
+      OnExecute = RedoActionExecute
+      OnUpdate = RedoActionUpdate
+      ShortCut = 12378
     end
   end
 end
