@@ -14,41 +14,47 @@ type
   TUndoRedoGroup = class;
   THistoryLeaf = class;
 
-
+  {from: Pharo smalltak}
   THistoryIterator = class
   private
     FRecorder: TUndoRedoGroup;
     FPlugged: Boolean;
-    FMaxSize: longint;
+    //FMaxSize: longint;
     FIndex: longint;
 
     function GetCurrent: THistoryLeaf;
     function GetRecorder: TUndoRedoGroup;
     function GetSize: longint;
+    function GetCanUndo: Boolean;
+    function GetCanRedo: Boolean;
 
     function Next: THistoryLeaf;
     function Previous: THistoryLeaf;
 
     procedure UpdateIndex;
-    procedure Reset;
     procedure RemoveFirst;
-
 
   public
     constructor Create;
     function AddItem(ANHistoryItem: THistoryLeaf): boolean;
     procedure OpenGroup;
     procedure CloseGroup;
+    procedure Reset;
 
     function HasNext: Boolean;
     function HasPrevious: Boolean;
     function DoIt: Boolean;
     function Redo: Boolean;
     function Undo: Boolean;
-
+    function UndoableCount: longint;
+    function RedoableCount: longint;
 
     property Recorder: TUndoRedoGroup read GetRecorder;
     property Current: THistoryLeaf read GetCurrent;
+    property Size: longint read GetSize;
+    property Index: longint read FIndex;
+    property CanUndo: Boolean read GetCanUndo;
+    property CanRedo: Boolean read GetCanRedo;
   end;
 
 
@@ -69,9 +75,11 @@ type
     FHistory: TObjectList;
 
     function GetHistory: TObjectList;
+    function GetSize: longint;
     function GetCurrent: THistoryLeaf;
 
   public
+    constructor Create;
     procedure Open;
     procedure Close;
     procedure Reset;
@@ -82,7 +90,8 @@ type
     function AddItem(ANHistoryItem: THistoryLeaf): boolean; override;
 
     property History: TObjectList read GetHistory;
-    property Curent: THistoryLeaf read GetCurrent;
+    property Current: THistoryLeaf read GetCurrent;
+    property Size: longint read GetSize;
 
 
     procedure RemoveFirst;
@@ -123,6 +132,14 @@ begin
   FPlugged := true;
 end;
 
+
+procedure THistoryIterator.Reset;
+begin
+  Recorder.Reset;
+  FIndex := -1;
+end;
+
+
 function THistoryIterator.DoIt: Boolean;
 begin
   Result := Redo;
@@ -154,9 +171,9 @@ begin
   savedPlugged := FPlugged;
   try
     FPlugged := false;
-    if GetCurrent <> nil then
+    if Current <> nil then
     begin
-      GetCurrent.Undo;
+      Current.Undo;
       Previous;
     end;
   finally
@@ -176,13 +193,13 @@ end;
 
 function THistoryIterator.HasNext: Boolean;
 begin
-  Result := (GetRecorder.History.Count - FIndex) > 1;
+  Result := (Recorder.History.Count - Index) > 1;
 end;
 
 
 function THistoryIterator.HasPrevious: Boolean;
 begin
-  Result := FIndex >= 0;
+  Result := Index >= 0;
 end;
 
 
@@ -217,8 +234,8 @@ begin
     Result := false;
     exit;
   end;
-  GetRecorder.RmoveLast(GetSize - FIndex);
-  Result := GetRecorder.AddItem(ANHistoryItem);
+  Recorder.RmoveLast(Size - Index);
+  Result := Recorder.AddItem(ANHistoryItem);
   UpdateIndex;
 end;
 
@@ -229,6 +246,21 @@ begin
     Result := THistoryLeaf(GetRecorder.History[FIndex])
   else
     Result := nil;
+end;
+
+
+function THistoryIterator.UndoableCount: longint;
+begin
+  if GetSize > 0 then
+    Result := FIndex + 1
+  else
+    Result := 0;
+end;
+
+
+function THistoryIterator.RedoableCount: longint;
+begin
+  Result := GetSize - FIndex - 1;
 end;
 
 
@@ -248,14 +280,19 @@ end;
 
 function THistoryIterator.GetSize: longint;
 begin
-  Result := GetRecorder.GetHistory.Count;
+  Result := Recorder.History.Count;
 end;
 
 
-procedure THistoryIterator.Reset;
+function THistoryIterator.GetCanUndo: Boolean;
 begin
-  FIndex := -1;
-  FPlugged := true;
+  Result := UndoableCount > 0;
+end;
+
+
+function THistoryIterator.GetCanRedo: Boolean;
+begin
+  Result := RedoableCount > 0;
 end;
 
 
@@ -290,6 +327,12 @@ begin
 end;
 
 
+constructor THistoryNode.Create;
+begin
+  FOpend := true;
+end;
+
+
 function THistoryNode.Opend: boolean;
 begin
   Result := FOpend;
@@ -310,7 +353,8 @@ end;
 
 procedure THistoryNode.Reset;
 begin
-  FHistory.Clear;
+  if Assigned(FHistory) then
+     FHistory.Clear;
   FOpend := True;
 end;
 
@@ -340,6 +384,14 @@ begin
   Result := FHistory;
 end;
 
+
+function THistoryNode.GetSize: longint;
+begin
+  if Assigned(FHistory) then
+    Result := FHistory.Count
+  else
+    Result := 0;
+end;
 
 function THistoryNode.GetCurrent: THistoryLeaf;
 begin

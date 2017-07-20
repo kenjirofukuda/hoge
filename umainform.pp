@@ -161,16 +161,29 @@ begin
   DeselectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
 end;
 
+
+procedure TMainForm.UndoActionExecute(Sender: TObject);
+begin
+  FDocument.UndoManager.Undo;
+end;
+
+
+procedure TMainForm.UndoActionUpdate(Sender: TObject);
+begin
+  UndoAction.Enabled := FDocument.UndoManager.CanUndo;
+end;
+
+
 procedure TMainForm.RedoActionExecute(Sender: TObject);
 begin
   FDocument.UndoManager.Redo;
 end;
 
+
 procedure TMainForm.RedoActionUpdate(Sender: TObject);
 begin
-  UndoAction.Enabled := FDocument.UndoManager.HasNext;
+  RedoAction.Enabled := FDocument.UndoManager.CanRedo;
 end;
-
 
 
 procedure TMainForm.DeselectAllActionExecute(Sender: TObject);
@@ -202,17 +215,6 @@ procedure TMainForm.ShowExtentBoundsActionExecute(Sender: TObject);
 begin
   FGraphicView.ShowExtentBounds := not FGraphicView.ShowExtentBounds;
   FGraphicView.Invalidate;
-end;
-
-procedure TMainForm.UndoActionExecute(Sender: TObject);
-begin
-  FDocument.UndoManager.Undo;
-end;
-
-
-procedure TMainForm.UndoActionUpdate(Sender: TObject);
-begin
-  UndoAction.Enabled := FDocument.UndoManager.Current <> nil;
 end;
 
 
