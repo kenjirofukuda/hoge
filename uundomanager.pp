@@ -28,6 +28,8 @@ type
     function GetSize: longint;
     function GetCanUndo: boolean;
     function GetCanRedo: boolean;
+    function GetItem(Index: integer): THistoryLeaf;
+    procedure SetItem(Index: integer; AObject: THistoryLeaf);
 
     function Next: THistoryLeaf;
     function Previous: THistoryLeaf;
@@ -55,6 +57,7 @@ type
     property Current: THistoryLeaf read GetCurrent;
     property Size: longint read GetSize;
     property Index: longint read FIndex;
+    property Items[ANIndex: integer]: THistoryLeaf read GetItem write SetItem; default;
     property CanUndo: boolean read GetCanUndo;
     property CanRedo: boolean read GetCanRedo;
   end;
@@ -90,6 +93,7 @@ type
     procedure CloseGroup;
 
     function Opend: boolean; override;
+    function Closed: boolean;
     function AddItem(ANHistoryItem: THistoryLeaf): boolean; override;
     function IsComposite: boolean; override;
     function IsEmpty: boolean;
@@ -173,15 +177,15 @@ end;
 function THistoryIterator.Undo: boolean;
 var
   savedPlugged: boolean;
+  cmd: THistoryLeaf;
 begin
   savedPlugged := FPlugged;
   try
     FPlugged := False;
-    if Current <> nil then
-    begin
-      Current.Undo;
-      Previous;
-    end;
+    cmd := Current;
+    if cmd <> nil then
+      cmd.Undo;
+    Previous;
   finally
     FPlugged := savedPlugged;
   end;
@@ -277,6 +281,18 @@ begin
 end;
 
 
+function THistoryIterator.GetItem(Index: integer): THistoryLeaf;
+begin
+  Result := Recorder.History.Items[Index] as THistoryLeaf;
+end;
+
+
+procedure THistoryIterator.SetItem(Index: integer; AObject: THistoryLeaf);
+begin
+  Recorder.History.Items[Index] := AObject;
+end;
+
+
 procedure THistoryIterator.UpdateIndex;
 begin
   if GetSize > MAX_HISTORY_SIZE then
@@ -349,6 +365,12 @@ end;
 function THistoryNode.Opend: boolean;
 begin
   Result := FOpend;
+end;
+
+
+function THistoryNode.Closed: boolean;
+begin
+  Result := not Opend;
 end;
 
 
