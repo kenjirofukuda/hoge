@@ -32,3 +32,4 @@ lib/
 # Other
 hoge
 .DS_Store
+test/fpcunithoge
