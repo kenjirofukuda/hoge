@@ -33,3 +33,5 @@ lib/
 hoge
 .DS_Store
 test/fpcunithoge
+*.obj
+test/fpcunithoge.fpcunit.ini

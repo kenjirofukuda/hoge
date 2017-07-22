@@ -15,6 +15,7 @@ type
   TUndoRedoRecord = class;
   THistoryLeaf = class;
 
+
   {from: Pharo smalltak}
   THistoryIterator = class
   private
@@ -89,7 +90,7 @@ type
     procedure Open;
     procedure Close;
     procedure Reset;
-    function OpenGroup: boolean;
+    function OpenGroup: boolean; virtual;
     procedure CloseGroup;
 
     function Opend: boolean; override;
@@ -111,6 +112,7 @@ type
 
   TUndoRedoGroup = class(THistoryNode)
   public
+    function OpenGroup: boolean; override;
     function DoIt: boolean; override;
     function Redo: boolean; override;
     function Undo: boolean; override;
@@ -507,6 +509,13 @@ begin
 end;
 
 
+function TUndoRedoGroup.OpenGroup: boolean;
+begin
+  Result := AddItem(TUndoRedoGroup.Create);
+end;
+
+
+
 function TUndoRedoGroup.DoIt: boolean;
 begin
   Result := Redo;
@@ -536,7 +545,7 @@ begin
   for i := GetHistory.Count - 1 downto 0 do
   begin
     each := GetHistory[i];
-    node := each as TUndoRedoGroup;
+    node := TUndoRedoGroup(each);
     node.Undo;
   end;
   Result := True;
