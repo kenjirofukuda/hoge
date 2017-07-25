@@ -45,6 +45,7 @@ type
     procedure CloseGroup;
     procedure Reset;
 
+    function Last: THistoryLeaf;
     function HasNext: boolean;
     function HasPrevious: boolean;
     function DoIt: boolean;
@@ -202,6 +203,11 @@ begin
   Result := FRecorder;
 end;
 
+
+function THistoryIterator.Last: THistoryLeaf;
+begin
+  Result := THistoryLeaf(Recorder.History.Last);
+end;
 
 function THistoryIterator.HasNext: boolean;
 begin

@@ -10,9 +10,6 @@ uses
 
 type
 
-
-
-
   THistoryIteratorTest = class(TTestCase)
   private
     FUndoManager: THistoryIterator;
@@ -29,6 +26,7 @@ type
     procedure TestUndo1;
     procedure TestUndo2;
     procedure TestGrouping;
+    procedure TestGroupedUndo2;
   end;
 
 implementation
@@ -38,6 +36,8 @@ uses
 
 type
   TIntegerList = specialize TFPGList<integer>;
+
+  { TAddElementCommand }
 
   TAddElementCommand = class(TUndoRedoRecord)
   private
@@ -118,7 +118,7 @@ var
 begin
   try
     col := TIntegerList.Create;
-    cmd := TAddElementCommand.Create(col,  1);
+    cmd := TAddElementCommand.Create(col, 1);
     FUndoManager.DoAndAddRecord(cmd);
     AssertEquals('FUndoManager.Size = 1', 1, FUndoManager.Size);
     AssertNotNull('FUndoManager.Recorder[0] is not null', FUndoManager.Recorder[0]);
@@ -180,16 +180,38 @@ begin
     AssertEquals('col.Last = 2', 2, col.Last);
     FUndoManager.Undo;
     AssertEquals('col.Count = 0', 0, col.Count);
-
-    //AssertNotNull('FUndoManager.Recorder[0] is not null', FUndoManager.Recorder[0]);
-    //AssertNotNull('FUndoManager.Current is not null', FUndoManager.Current);
-    //FUndoManager.Undo;
-    //AssertEquals('col.Count = 0', 0, col.Count);
   finally
     FreeAndNil(col);
   end;
 end;
 
+
+procedure THistoryIteratorTest.TestGroupedUndo2;
+var
+  col: TIntegerList;
+  cmd: TUndoRedoRecord;
+begin
+  try
+    col := TIntegerList.Create;
+    col.Add(1);
+    col.Add(2);
+    col.Add(3);
+    FUndoManager.OpenGroup;
+    cmd := TRemoveElementCommand.Create(col);
+    FUndoManager.DoAndAddRecord(cmd);
+    cmd := TRemoveElementCommand.Create(col);
+    FUndoManager.DoAndAddRecord(cmd);
+    FUndoManager.CloseGroup;
+
+    AssertTrue('(FUndoManager.Size = 1) and ( FUndoManager.Last.InheritsFrom(TUndoRedoGroup))', (FUndoManager.Size = 1) and ( FUndoManager.Last.InheritsFrom(TUndoRedoGroup)));
+    FUndoManager.Undo;
+    AssertEquals('col.Count = 3', 3, col.Count);
+    AssertEquals('col[1] = 2', 2, col[1]);
+  finally
+    FreeAndNil(col);
+  end;
+
+end;
 
 procedure THistoryIteratorTest.UndoHandler(Sender: TObject);
 begin
