@@ -66,6 +66,7 @@ type
     procedure WheelZoom(H, V: integer; X, Y: single; Direction: single);
     procedure WheelZoom(H, V: integer; Direction: single);
     property PortHeight: longint read FPortHeight;
+    property PortWidth: longint read FPortWidth;
     property WorldScale: single read FWorldScale;
   end;
 

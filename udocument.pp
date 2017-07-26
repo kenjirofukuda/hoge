@@ -48,6 +48,8 @@ type
     procedure SaveToDefault;
     procedure LoadFromDefault;
 
+    procedure InstallSampleGraphics(xmin, ymin, xmax, ymax: Single; ACount: longint = 100);
+
   public
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property Bounds: TRectangleF read GetBounds;
@@ -71,6 +73,16 @@ type
   end;
 
 
+  TAddGraphicsCommand = class(TDocumentCommand)
+  private
+    FCreatedGraphics: TGraphicList;
+  public
+    constructor Create(ADocument: TDocument; AGraphics: TGraphicList);
+    constructor Create(ADocument: TDocument; AGraphic: TGraphic);
+
+    function Redo: boolean; override;
+    function Undo: boolean; override;
+  end;
 
 
 function AppConfigDir: String;
@@ -79,7 +91,8 @@ function AppConfigFilePath: String;
 
 implementation
 
-uses Math;
+uses
+  Math;
 
 type
   TGraphicDistance = record
@@ -87,7 +100,6 @@ type
     FDistance: single;
     class operator = (a, b : TGraphicDistance) : Boolean;
   end;
-
 
   TGraphicDistanceList = specialize TFPGList<TGraphicDistance>;
 
@@ -100,7 +112,7 @@ end;
 constructor TDocument.Create;
 begin
   inherited;
-  FGraphicList := TGraphicList.Create;
+  FGraphicList := TGraphicList.Create(False);
   FLockChange := False;
   FUndoManager := THistoryIterator.Create;
 end;
@@ -165,7 +177,7 @@ function TDocument.GetSelectedGraphics: TGraphicList;
 var
   g: TGraphic;
 begin
-  Result := TGraphicList.Create;
+  Result := TGraphicList.Create(False);
   for g in FGraphicList do
   begin
     if g.Selected then
@@ -184,6 +196,28 @@ begin
     if g.Selected then
        inc(Result);
   end;
+end;
+
+
+procedure TDocument.InstallSampleGraphics(xmin, ymin, xmax, ymax: Single; ACount: longint);
+var
+  samples: TGraphicList;
+  function CreateSampleGraphics(xmin, ymin, xmax, ymax: Single; ACount: longint): TGraphicList;
+  var
+    i: longint;
+    x, y: single;
+  begin
+    Result := TGraphicList.Create(False);
+    for i := 1 to ACount do
+    begin
+      x := Random * (xmax - xmin) + xmin;
+      y := Random * (ymax - ymin) + ymin;
+      Result.Add(TPointGraphic.Create(x, y));
+    end;
+  end;
+begin
+  samples := CreateSampleGraphics(xmin, ymin, xmax, ymax, ACount);
+  UndoManager.DoAndAddRecord(TAddGraphicsCommand.Create(Self, samples));
 end;
 
 
@@ -388,6 +422,34 @@ end;
 function TClearCommand.Undo: boolean;
 begin
    FDocument.AddGraphics(FSelectedGraphics);
+   Result := false;
+end;
+
+
+constructor TAddGraphicsCommand.Create(ADocument: TDocument; AGraphics: TGraphicList);
+begin
+  inherited Create(ADocument);
+  FCreatedGraphics := TGraphicList.Create(False);
+  FCreatedGraphics.Assign(AGraphics);
+end;
+
+
+constructor TAddGraphicsCommand.Create(ADocument: TDocument; AGraphic: TGraphic);
+begin
+  Self.Create(ADocument, AGraphic.AsList);
+end;
+
+
+function TAddGraphicsCommand.Redo: boolean;
+begin
+  FDocument.AddGraphics(FCreatedGraphics);
+  Result := true;
+end;
+
+
+function TAddGraphicsCommand.Undo: boolean;
+begin
+   FDocument.RemoveGraphics(FCreatedGraphics);
    Result := false;
 end;
 

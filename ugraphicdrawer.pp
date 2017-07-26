@@ -41,8 +41,6 @@ end;
 
 
 procedure TGraphicDrawerImpl.DrawAxisLineOn(Canvas: TCanvas);
-var
-  g: TGraphic;
 begin
   Canvas.Pen.Color := clBlack;
   VLine(Canvas, 0);
@@ -104,7 +102,6 @@ var
   i: longint;
   hvPoint: TPointF;
   r: TRect;
-  savedColor: TColor;
 begin
   i := 4;
   hvPoint := Viewport.WorldToDevice(At.x, At.y);

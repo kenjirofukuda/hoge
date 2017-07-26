@@ -13,6 +13,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    InstallSampleGraphicsAction: TAction;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
     RedoAction: TAction;
     UndoAction: TAction;
     DeselectAllAction: TAction;
@@ -70,6 +73,7 @@ type
     procedure UndoActionUpdate(Sender: TObject);
     procedure ViewFitActionExecute(Sender: TObject);
     procedure RevealAppConfigDirMenuItemClick(Sender: TObject);
+    procedure InstallSampleGraphicsActionExecute(Sender: TObject);
 
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -92,7 +96,7 @@ var
 implementation
 
 uses
-  UGraphicDrawer;
+  LCLType, UGraphicDrawer;
 
 {$R *.lfm}
 
@@ -136,6 +140,11 @@ end;
 procedure TMainForm.ClearActionUpdate(Sender: TObject);
 begin
   ClearMenuItem.Enabled := FDocument.SelectedCount > 0;
+  {$IFNDEF DARWIN}
+  ClearAction.ShortCut := ShortCut(VK_BACK, [ssCtrl]);
+  {$ELSE}
+  ClearAction.ShortCut := ShortCut(VK_BACK, [ssMeta]);
+  {$ENDIF}
 end;
 
 
@@ -149,6 +158,9 @@ end;
 procedure TMainForm.SelectAllActionUpdate(Sender: TObject);
 begin
   SelectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
+  {$IFNDEF DARWIN}
+  SelectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl]);
+  {$ENDIF}
 end;
 
 
@@ -161,34 +173,49 @@ end;
 procedure TMainForm.DeselectAllActionUpdate(Sender: TObject);
 begin
   DeselectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
+  {$IFNDEF DARWIN}
+  DeselectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl, ssShift]);
+  {$ENDIF}
+end;
+
+
+procedure TMainForm.InstallSampleGraphicsActionExecute(Sender: TObject);
+var
+  p1, p2: TPointF;
+begin
+  p1 := FGraphicDrawer.Viewport.DeviceToWorld(0, FGraphicDrawer.Viewport.PortHeight);
+  p2 := FGraphicDrawer.Viewport.DeviceToWorld(FGraphicDrawer.Viewport.PortWidth, 0);
+  FDocument.InstallSampleGraphics(p1.x, p1.y, p2.x, p2.y);
 end;
 
 
 procedure TMainForm.UndoActionExecute(Sender: TObject);
-var
-  reply: boolean;
 begin
-  reply := FDocument.UndoManager.Undo;
+  FDocument.UndoManager.Undo;
 end;
 
 
 procedure TMainForm.UndoActionUpdate(Sender: TObject);
 begin
   UndoAction.Enabled := FDocument.UndoManager.CanUndo;
+  {$IFNDEF DARWIN}
+  UndoAction.ShortCut := ShortCut(VK_Z, [ssCtrl]);
+  {$ENDIF}
 end;
 
 
 procedure TMainForm.RedoActionExecute(Sender: TObject);
-var
-  reply: boolean;
 begin
-  reply := FDocument.UndoManager.Redo;
+  FDocument.UndoManager.Redo;
 end;
 
 
 procedure TMainForm.RedoActionUpdate(Sender: TObject);
 begin
   RedoAction.Enabled := FDocument.UndoManager.CanRedo;
+  {$IFNDEF DARWIN}
+  UndoAction.ShortCut := ShortCut(VK_Z, [ssShift, ssCtrl]);
+  {$ENDIF}
 end;
 
 

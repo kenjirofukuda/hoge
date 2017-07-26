@@ -37,12 +37,13 @@ type
 
 implementation
 
-uses UGraphicBase;
+uses
+  UGraphicBase, UDocument, UGraphic;
 
 
 procedure TViewTrackingImpl.ViewMove(Shift: TShiftState; X, Y: integer);
 var
-  p1, p2, movedDevice: TPoint;
+  p1, p2: TPoint;
   wp1, wp2, moved: TPointF;
 begin
   FCurrPoint := Point(X, Y);
@@ -87,8 +88,6 @@ end;
 
 procedure TViewTrackingImpl.TrackEnd(Button: TMouseButton; Shift: TShiftState;
   X, Y: integer);
-var
-  xyPoint: TPointF;
 begin
   FMiddleDown := False;
 end;
@@ -116,7 +115,9 @@ begin
   if Button = mbLeft then
   begin
     xyPoint := FGraphicView.GraphicDrawer.Viewport.DeviceToWorld(X, Y);
-    FGraphicView.Document.AddPoint(xyPoint.x, xyPoint.y);
+    FGraphicView.Document.UndoManager.DoAndAddRecord(
+      TAddGraphicsCommand.Create(FGraphicView.Document,
+      TPointGraphic.Create(xyPoint.x, xyPoint.y)));
   end;
 end;
 

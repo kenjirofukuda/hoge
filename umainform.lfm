@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 1084
+  Left = 550
   Height = 480
-  Top = 122
+  Top = 254
   Width = 680
   Caption = 'Points View'
   ClientHeight = 480
@@ -78,6 +78,12 @@ object MainForm: TMainForm
       object ShowExtentBoundsMenuItem: TMenuItem
         Action = ShowExtentBoundsAction
       end
+      object MenuItem4: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem5: TMenuItem
+        Action = InstallSampleGraphicsAction
+      end
     end
   end
   object ActionList: TActionList
@@ -132,6 +138,11 @@ object MainForm: TMainForm
       OnExecute = RedoActionExecute
       OnUpdate = RedoActionUpdate
       ShortCut = 12378
+    end
+    object InstallSampleGraphicsAction: TAction
+      Category = 'Debug'
+      Caption = 'Install sample graphics'
+      OnExecute = InstallSampleGraphicsActionExecute
     end
   end
 end

@@ -40,6 +40,7 @@ type
   public
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
     function Distance(APoint: TPointF): single; virtual; abstract;
+    function AsList: TGraphicList;
     property Selected: boolean read FSelected write FSelected;
   end;
 
@@ -61,6 +62,12 @@ begin
   inherited;
 end;
 
+
+function TGraphic.AsList: TGraphicList;
+begin
+  Result := TGraphicList.Create(False);
+  Result.Add(Self);
+end;
 
 
 end.
