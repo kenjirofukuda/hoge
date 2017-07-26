@@ -65,6 +65,7 @@ type
     procedure ShowAxisLineActionExecute(Sender: TObject);
     procedure ShowAxisLineActionUpdate(Sender: TObject);
     procedure ShowExtentBoundsActionExecute(Sender: TObject);
+    procedure ShowExtentBoundsActionUpdate(Sender: TObject);
     procedure UndoActionExecute(Sender: TObject);
     procedure UndoActionUpdate(Sender: TObject);
     procedure ViewFitActionExecute(Sender: TObject);
@@ -140,7 +141,8 @@ end;
 
 procedure TMainForm.ClearActionExecute(Sender: TObject);
 begin
-  FDocument.RemoveSelectedGraphic;
+  //FDocument.RemoveSelectedGraphic;
+  FDocument.UndoManager.DoAndAddRecord(TClearCommand.Create(FDocument));
 end;
 
 
@@ -163,8 +165,10 @@ end;
 
 
 procedure TMainForm.UndoActionExecute(Sender: TObject);
+var
+  reply: boolean;
 begin
-  FDocument.UndoManager.Undo;
+  reply := FDocument.UndoManager.Undo;
 end;
 
 
@@ -175,8 +179,10 @@ end;
 
 
 procedure TMainForm.RedoActionExecute(Sender: TObject);
+var
+  reply: boolean;
 begin
-  FDocument.UndoManager.Redo;
+  reply := FDocument.UndoManager.Redo;
 end;
 
 
@@ -218,6 +224,12 @@ begin
 end;
 
 
+procedure TMainForm.ShowExtentBoundsActionUpdate(Sender: TObject);
+begin
+  ShowExtentBoundsMenuItem.Checked := FGraphicView.ShowExtentBounds;
+end;
+
+
 procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
   FGraphicDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
@@ -235,7 +247,6 @@ procedure TMainForm.PointMenuItemClick(Sender: TObject);
 begin
   FGraphicView.ChooseTool('point');
 end;
-
 
 
 (* ----- Events ----- *)

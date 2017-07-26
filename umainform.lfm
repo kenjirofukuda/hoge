@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 193
+  Left = 1084
   Height = 480
-  Top = 387
+  Top = 122
   Width = 680
   Caption = 'Points View'
   ClientHeight = 480
@@ -74,8 +74,6 @@ object MainForm: TMainForm
       end
       object ShowAxisLineMenuItem: TMenuItem
         Action = ShowAxisLineAction
-        AutoCheck = True
-        RadioItem = True
       end
       object ShowExtentBoundsMenuItem: TMenuItem
         Action = ShowExtentBoundsAction
@@ -87,9 +85,7 @@ object MainForm: TMainForm
     top = 152
     object ShowAxisLineAction: TAction
       Category = 'Debug'
-      AutoCheck = True
       Caption = 'Show Axis line'
-      HelpType = htKeyword
       OnExecute = ShowAxisLineActionExecute
       OnUpdate = ShowAxisLineActionUpdate
     end
@@ -97,6 +93,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Show Extent bounds'
       OnExecute = ShowExtentBoundsActionExecute
+      OnUpdate = ShowExtentBoundsActionUpdate
     end
     object ViewFitAction: TAction
       Category = 'View'
@@ -114,6 +111,7 @@ object MainForm: TMainForm
       Caption = 'Select All'
       OnExecute = SelectAllActionExecute
       OnUpdate = SelectAllActionUpdate
+      ShortCut = 4161
     end
     object DeselectAllAction: TAction
       Category = 'Edit'

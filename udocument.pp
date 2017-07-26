@@ -34,6 +34,8 @@ type
     destructor Destroy; override;
     procedure AddPoint(X, Y: single);
     procedure AddGraphic(AGraphic: TGraphic);
+    procedure AddGraphics(AGraphicList: TGraphicList);
+
     function FindGraphicAt(APoint: TPointF; ARadius: longint;
       AViewScale: single): TGraphic;
 
@@ -52,6 +54,22 @@ type
     property SelectedCount: longint read GetSelectedCount;
     property UndoManager: THistoryIterator read FUndoManager;
   end;
+
+  TDocumentCommand = class(TUndoRedoRecord)
+  private
+    FSelectedGraphics: TGraphicList;
+    FDocument: TDocument;
+  public
+    constructor Create(ADocument: TDocument);
+  end;
+
+
+  TClearCommand = class(TDocumentCommand)
+  public
+    function Redo: boolean; override;
+    function Undo: boolean; override;
+  end;
+
 
 
 
@@ -90,6 +108,7 @@ end;
 
 destructor TDocument.Destroy;
 begin
+  FreeAndNil(FUndoManager);
   FreeAndNil(FGraphicList);
 end;
 
@@ -173,17 +192,23 @@ var
   g: TGraphic;
 begin
   for g in AGraphicList do
-  begin
-    if g.Selected then
-       FGraphicList.Remove(g);
-  end;
+    FGraphicList.Remove(g);
   Change;
 end;
 
 
-procedure TDocument.RemoveAllGraphic;
+procedure TDocument.AddGraphics(AGraphicList: TGraphicList);
 var
-  selectedGraphics: TGraphicList;
+  g: TGraphic;
+begin
+  for g in AGraphicList do
+    FGraphicList.Add(g);
+  Change;
+end;
+
+
+
+procedure TDocument.RemoveAllGraphic;
 begin
   SetAllSelected(true);
   RemoveSelectedGraphic;
@@ -341,6 +366,29 @@ begin
     Result := graphicDistance.FGraphic
   else
     Result := nil;
+end;
+
+
+constructor TDocumentCommand.Create(ADocument: TDocument);
+begin
+  inherited Create;
+  FDocument := ADocument;
+  FSelectedGraphics := TGraphicList.Create;
+  FSelectedGraphics.Assign(FDocument.GetSelectedGraphics);
+end;
+
+
+function TClearCommand.Redo: boolean;
+begin
+  FDocument.RemoveGraphics(FSelectedGraphics);
+  Result := true;
+end;
+
+
+function TClearCommand.Undo: boolean;
+begin
+   FDocument.AddGraphics(FSelectedGraphics);
+   Result := false;
 end;
 
 

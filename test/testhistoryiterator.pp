@@ -203,7 +203,7 @@ begin
     FUndoManager.DoAndAddRecord(cmd);
     FUndoManager.CloseGroup;
 
-    AssertTrue('(FUndoManager.Size = 1) and ( FUndoManager.Last.InheritsFrom(TUndoRedoGroup))', (FUndoManager.Size = 1) and ( FUndoManager.Last.InheritsFrom(TUndoRedoGroup)));
+    AssertTrue('(FUndoManager.Size = 1) and ( FUndoManager.Last.InheritsFrom(TUndoRedoGroup))', (FUndoManager.Size = 1) and (FUndoManager.Last.InheritsFrom(TUndoRedoGroup)));
     FUndoManager.Undo;
     AssertEquals('col.Count = 3', 3, col.Count);
     AssertEquals('col[1] = 2', 2, col[1]);
@@ -212,6 +212,7 @@ begin
   end;
 
 end;
+
 
 procedure THistoryIteratorTest.UndoHandler(Sender: TObject);
 begin
