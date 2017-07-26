@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 550
+  Left = 276
   Height = 480
-  Top = 254
+  Top = 293
   Width = 680
   Caption = 'Points View'
   ClientHeight = 480
@@ -13,8 +13,8 @@ object MainForm: TMainForm
   LCLVersion = '1.6.4.0'
   object StatusBar: TStatusBar
     Left = 0
-    Height = 15
-    Top = 465
+    Height = 21
+    Top = 459
     Width = 680
     Panels = <>
   end

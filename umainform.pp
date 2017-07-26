@@ -125,6 +125,16 @@ begin
     OnMouseMove := @GraphicViewMouseMove;
     OnResize := @GraphicViewResize;
   end;
+
+  {$IFNDEF DARWIN}
+  UndoAction.ShortCut := ShortCut(VK_Z, [ssCtrl]);
+  RedoAction.ShortCut := ShortCut(VK_Z, [ssShift, ssCtrl]);
+  ClearAction.ShortCut := ShortCut(VK_BACK, [ssCtrl]);
+  SelectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl]);
+  DeselectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl, ssShift]);
+  {$ELSE}
+  ClearAction.ShortCut := ShortCut(VK_BACK, [ssMeta]);
+  {$ENDIF}
 end;
 
 
@@ -140,11 +150,6 @@ end;
 procedure TMainForm.ClearActionUpdate(Sender: TObject);
 begin
   ClearMenuItem.Enabled := FDocument.SelectedCount > 0;
-  {$IFNDEF DARWIN}
-  ClearAction.ShortCut := ShortCut(VK_BACK, [ssCtrl]);
-  {$ELSE}
-  ClearAction.ShortCut := ShortCut(VK_BACK, [ssMeta]);
-  {$ENDIF}
 end;
 
 
@@ -158,9 +163,6 @@ end;
 procedure TMainForm.SelectAllActionUpdate(Sender: TObject);
 begin
   SelectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
-  {$IFNDEF DARWIN}
-  SelectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl]);
-  {$ENDIF}
 end;
 
 
@@ -173,9 +175,6 @@ end;
 procedure TMainForm.DeselectAllActionUpdate(Sender: TObject);
 begin
   DeselectAllMenuItem.Enabled := FDocument.GetGraphics.Count > 0;
-  {$IFNDEF DARWIN}
-  DeselectAllAction.ShortCut := ShortCut(VK_A, [ssCtrl, ssShift]);
-  {$ENDIF}
 end;
 
 
@@ -198,9 +197,6 @@ end;
 procedure TMainForm.UndoActionUpdate(Sender: TObject);
 begin
   UndoAction.Enabled := FDocument.UndoManager.CanUndo;
-  {$IFNDEF DARWIN}
-  UndoAction.ShortCut := ShortCut(VK_Z, [ssCtrl]);
-  {$ENDIF}
 end;
 
 
@@ -213,9 +209,6 @@ end;
 procedure TMainForm.RedoActionUpdate(Sender: TObject);
 begin
   RedoAction.Enabled := FDocument.UndoManager.CanRedo;
-  {$IFNDEF DARWIN}
-  UndoAction.ShortCut := ShortCut(VK_Z, [ssShift, ssCtrl]);
-  {$ENDIF}
 end;
 
 
