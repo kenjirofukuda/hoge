@@ -9,34 +9,13 @@ uses
   Grids, UGraphicBase;
 
 type
-
-
   { TOptionsForm }
-
   TOptionsForm = class(TForm)
-    SelectedHandleColorBox: TColorBox;
-    PointColorLabel: TLabel;
-    AxisLineColorLabel: TLabel;
-    BackgroundColorLabel: TLabel;
-    ExtentBoundsColorLabel: TLabel;
-
-    ExtentBoundsColorBox: TColorBox;
-    BackgroundColorBox: TColorBox;
-    AxisLineColorBox: TColorBox;
-    PointColorBox: TColorBox;
-
+    ColorGroupBox: TGroupBox;
     CloseButton: TButton;
-    SelectedHandleColor: TLabel;
-
     procedure FormCreate(Sender: TObject);
-
     procedure CloseButtonClick(Sender: TObject);
-
-    procedure AxisLineColorBoxChange(Sender: TObject);
-    procedure BackgroundColorBoxChange(Sender: TObject);
-    procedure ExtentBoundsColorBoxChange(Sender: TObject);
-    procedure PointColorBoxChange(Sender: TObject);
-    procedure SelectedHandleColorBoxChange(Sender: TObject);
+    procedure ColorBoxChange(Sender: TObject);
   private
 
   public
@@ -51,44 +30,52 @@ implementation
 {$R *.lfm}
 
 { TOptionsForm }
-
 procedure TOptionsForm.CloseButtonClick(Sender: TObject);
 begin
   Self.Close;
 end;
 
-procedure TOptionsForm.ExtentBoundsColorBoxChange(Sender: TObject);
-begin
-  GraphicEnvirons.ExtentBoundsColor.Value := ExtentBoundsColorBox.Selected;
-end;
 
 procedure TOptionsForm.FormCreate(Sender: TObject);
+var
+  key: string;
+  AColorBox: TColorBox;
+  ALabel: TLabel;
 begin
-  BackgroundColorBox.Selected := GraphicEnvirons.BackgroundColor.Value;
-  ExtentBoundsColorBox.Selected := GraphicEnvirons.ExtentBoundsColor.Value;
-  AxisLineColorBox.Selected := GraphicEnvirons.AxisLineColor.Value;
-  PointColorBox.Selected := GraphicEnvirons.PointColor.Value;
-  SelectedHandleColorBox.Selected := GraphicEnvirons.SelectedHandleColor.Value;
+  ColorGroupBox.AutoSize := False;
+  for key in GraphicEnvirons.ColorSlotNames do
+  begin
+    ALabel := TLabel.Create(ColorGroupBox);
+    with ALabel do
+    begin
+      Parent := ColorGroupBox;
+      Name := key + 'Label';
+      Caption := key;
+    end;
+    AColorBox := TColorBox.Create(ColorGroupBox);
+    with AColorBox do
+    begin
+      Parent := ColorGroupBox;
+      Name := key;
+      Style := [cbStandardColors, cbExtendedColors, cbCustomColor,
+        cbCustomColors, cbPrettyNames];
+      OnChange := @ColorBoxChange;
+      Selected := GraphicEnvirons.ColorSlotMap.KeyData[key].Value;
+    end;
+  end;
+  ColorGroupBox.AutoSize := True;
 end;
 
-procedure TOptionsForm.PointColorBoxChange(Sender: TObject);
+
+procedure TOptionsForm.ColorBoxChange(Sender: TObject);
+var
+  AColorBox: TColorBox;
+  AKey: string;
 begin
-  GraphicEnvirons.PointColor.Value := PointColorBox.Selected;
+  AColorBox := Sender as TColorBox;
+  AKey := AColorBox.Name;
+  GraphicEnvirons.ColorSlotMap.KeyData[AKey].Value := AColorBox.Selected;
 end;
 
-procedure TOptionsForm.SelectedHandleColorBoxChange(Sender: TObject);
-begin
-  GraphicEnvirons.SelectedHandleColor.Value := SelectedHandleColorBox.Selected;
-end;
-
-procedure TOptionsForm.BackgroundColorBoxChange(Sender: TObject);
-begin
-  GraphicEnvirons.BackgroundColor.Value := BackgroundColorBox.Selected;
-end;
-
-procedure TOptionsForm.AxisLineColorBoxChange(Sender: TObject);
-begin
-  GraphicEnvirons.AxisLineColor.Value := AxisLineColorBox.Selected;
-end;
 
 end.

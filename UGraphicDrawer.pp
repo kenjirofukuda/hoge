@@ -119,14 +119,14 @@ end;
 
 procedure TGraphicDrawerImpl.FillHandle(Canvas: TCanvas; At: TPointF);
 var
-  i: longint;
+  handleSize: longint;
   hvPoint: TPointF;
   r: TRect;
 begin
-  i := 4;
+  handleSize := 4;
   hvPoint := Viewport.WorldToDevice(At.x, At.y);
-  r := Rect(round(hvPoint.x) - i, round(hvPoint.y) - i, round(hvPoint.x) +
-    i, round(hvPoint.y) + i);
+  r := Rect(round(hvPoint.x) - handleSize, round(hvPoint.y) - handleSize, round(hvPoint.x) +
+    handleSize, round(hvPoint.y) + handleSize);
   Canvas.FillRect(r);
 end;
 

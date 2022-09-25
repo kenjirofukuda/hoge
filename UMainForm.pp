@@ -8,49 +8,53 @@ uses
   Classes, SysUtils, Types, UDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
   Dialogs, LCLIntf, ActnList, StdCtrls, UGraphicBase, UGraphicView,
-  UOptionsForm ;
+  UOptionsForm;
 
 type
   { TMainForm }
 
   TMainForm = class(TForm)
-    InstallSampleGraphicsAction: TAction;
+    {Separator MenuItems}
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
-    OptionsMenuItem: TMenuItem;
-    RedoAction: TAction;
-    UndoAction: TAction;
-    DeselectAllAction: TAction;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
-    RedoMenuItem: TMenuItem;
-    UndoMenuItem: TMenuItem;
-    SelectAllMenuItem: TMenuItem;
-    DeselectAllMenuItem: TMenuItem;
-    SelectAllAction: TAction;
-    PointMenuItem: TMenuItem;
-    SelectMenuItem: TMenuItem;
-    ToolsMenu: TMenuItem;
+
     StatusBar: TStatusBar;
 
     {Actions}
     ActionList: TActionList;
+    RedoAction: TAction;
+    UndoAction: TAction;
     ClearAction: TAction;
+    SelectAllAction: TAction;
+    DeselectAllAction: TAction;
     ViewFitAction: TAction;
     ShowExtentBoundsAction: TAction;
     ShowAxisLineAction: TAction;
+    InstallSampleGraphicsAction: TAction;
 
     MainMenu: TMainMenu;
     {[Edit]}
     EditMenu: TMenuItem;
+    RedoMenuItem: TMenuItem;
+    UndoMenuItem: TMenuItem;
     ClearMenuItem: TMenuItem;
+    SelectAllMenuItem: TMenuItem;
+    DeselectAllMenuItem: TMenuItem;
 
     {[View]}
     ViewMenu: TMenuItem;
     FitMenuItem: TMenuItem;
 
+    {[Tools]}
+    ToolsMenu: TMenuItem;
+    PointMenuItem: TMenuItem;
+    SelectMenuItem: TMenuItem;
+
     {[Debug]}
     DebugMenu: TMenuItem;
+    OptionsMenuItem: TMenuItem;
     RevealAppConfigDirMenuItem: TMenuItem;
     MenuItem1: TMenuItem;
     ShowExtentBoundsMenuItem: TMenuItem;

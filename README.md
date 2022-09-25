@@ -13,6 +13,7 @@ goal: gdsfeel-lazarus or LazDraw.
 
 latest change at first.
 
+- add: [Debug][Options ...] for Graphic UI color chooser.
 - add: [Edit][Select All], [Deselect All]
 - change: [Edit][Clear All] -> [Clear]
 - implement [View][Fit]
