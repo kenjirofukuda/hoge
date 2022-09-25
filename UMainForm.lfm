@@ -1,0 +1,154 @@
+object MainForm: TMainForm
+  Left = 650
+  Height = 480
+  Top = 459
+  Width = 680
+  Caption = 'Points View'
+  ClientHeight = 458
+  ClientWidth = 680
+  Color = clNavy
+  Menu = MainMenu
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poScreenCenter
+  LCLVersion = '2.2.2.0'
+  object StatusBar: TStatusBar
+    Left = 0
+    Height = 24
+    Top = 434
+    Width = 680
+    Panels = <>
+    ParentColor = False
+  end
+  object MainMenu: TMainMenu
+    Left = 536
+    Top = 16
+    object EditMenu: TMenuItem
+      Caption = 'Edit'
+      object UndoMenuItem: TMenuItem
+        Action = UndoAction
+      end
+      object RedoMenuItem: TMenuItem
+        Action = RedoAction
+      end
+      object MenuItem3: TMenuItem
+        Caption = '-'
+        Enabled = False
+      end
+      object ClearMenuItem: TMenuItem
+        Action = ClearAction
+      end
+      object MenuItem2: TMenuItem
+        Caption = '-'
+      end
+      object SelectAllMenuItem: TMenuItem
+        Action = SelectAllAction
+      end
+      object DeselectAllMenuItem: TMenuItem
+        Action = DeselectAllAction
+      end
+    end
+    object ViewMenu: TMenuItem
+      Caption = 'View'
+      object FitMenuItem: TMenuItem
+        Action = ViewFitAction
+      end
+    end
+    object ToolsMenu: TMenuItem
+      Caption = 'Tools'
+      object SelectMenuItem: TMenuItem
+        Caption = 'Select'
+        OnClick = SelectMenuItemClick
+      end
+      object PointMenuItem: TMenuItem
+        Caption = 'Point'
+        OnClick = PointMenuItemClick
+      end
+    end
+    object DebugMenu: TMenuItem
+      Caption = 'Debug'
+      object OptionsMenuItem: TMenuItem
+        Caption = 'Options ...'
+        OnClick = OptionsMenuItemClick
+      end
+      object RevealAppConfigDirMenuItem: TMenuItem
+        Caption = 'Reveal AppConfigDir'
+        OnClick = RevealAppConfigDirMenuItemClick
+      end
+      object MenuItem1: TMenuItem
+        Caption = '-'
+      end
+      object ShowAxisLineMenuItem: TMenuItem
+        Action = ShowAxisLineAction
+      end
+      object ShowExtentBoundsMenuItem: TMenuItem
+        Action = ShowExtentBoundsAction
+      end
+      object MenuItem4: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem5: TMenuItem
+        Action = InstallSampleGraphicsAction
+      end
+    end
+  end
+  object ActionList: TActionList
+    Left = 557
+    Top = 152
+    object ShowAxisLineAction: TAction
+      Category = 'Debug'
+      Caption = 'Show Axis line'
+      OnExecute = ShowAxisLineActionExecute
+      OnUpdate = ShowAxisLineActionUpdate
+    end
+    object ShowExtentBoundsAction: TAction
+      Category = 'Debug'
+      Caption = 'Show Extent bounds'
+      OnExecute = ShowExtentBoundsActionExecute
+      OnUpdate = ShowExtentBoundsActionUpdate
+    end
+    object ViewFitAction: TAction
+      Category = 'View'
+      Caption = 'Fit'
+      OnExecute = ViewFitActionExecute
+    end
+    object ClearAction: TAction
+      Category = 'Edit'
+      Caption = 'Clear'
+      OnExecute = ClearActionExecute
+      OnUpdate = ClearActionUpdate
+    end
+    object SelectAllAction: TAction
+      Category = 'Edit'
+      Caption = 'Select All'
+      OnExecute = SelectAllActionExecute
+      OnUpdate = SelectAllActionUpdate
+      ShortCut = 4161
+    end
+    object DeselectAllAction: TAction
+      Category = 'Edit'
+      Caption = 'Deselect All'
+      OnExecute = DeselectAllActionExecute
+      OnUpdate = DeselectAllActionUpdate
+    end
+    object UndoAction: TAction
+      Category = 'Edit'
+      Caption = 'Undo'
+      OnExecute = UndoActionExecute
+      OnUpdate = UndoActionUpdate
+      ShortCut = 4186
+    end
+    object RedoAction: TAction
+      Category = 'Edit'
+      Caption = 'Redo'
+      OnExecute = RedoActionExecute
+      OnUpdate = RedoActionUpdate
+      ShortCut = 12378
+    end
+    object InstallSampleGraphicsAction: TAction
+      Category = 'Debug'
+      Caption = 'Install sample graphics'
+      OnExecute = InstallSampleGraphicsActionExecute
+    end
+  end
+end
