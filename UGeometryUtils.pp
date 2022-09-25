@@ -1,4 +1,4 @@
-unit UGeometyUtils;
+unit UGeometryUtils;
 
 {$mode objfpc}{$H+}
 

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="10"/>
+    <Version Value="12"/>
     <General>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <MainUnit Value="0"/>
       <Title Value="hoge"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -18,7 +20,7 @@
       <AutoIncrementBuild Value="True"/>
       <BuildNr Value="3"/>
       <Attributes pvaDebug="True"/>
-      <StringTable CompanyName="hoge Inc." ProductName="Hoge" ProductVersion=""/>
+      <StringTable CompanyName="hoge Inc." ProductName="Hoge"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -27,9 +29,10 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="2">
       <Item1>
@@ -39,68 +42,65 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="13">
       <Unit0>
         <Filename Value="hoge.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="umainform.pp"/>
+        <Filename Value="UMainForm.pp"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="UMainForm"/>
       </Unit1>
       <Unit2>
         <Filename Value="README.md"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="udocument.pp"/>
+        <Filename Value="UDocument.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UDocument"/>
       </Unit3>
       <Unit4>
-        <Filename Value="ugraphicdrawer.pp"/>
+        <Filename Value="UGraphicDrawer.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UGraphicDrawer"/>
       </Unit4>
       <Unit5>
-        <Filename Value="uviewport.pp"/>
+        <Filename Value="UViewport.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UViewport"/>
       </Unit5>
       <Unit6>
-        <Filename Value="ugeometyutils.pp"/>
+        <Filename Value="UGeometryUtils.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UGeometyUtils"/>
       </Unit6>
       <Unit7>
-        <Filename Value="ugraphicview.pp"/>
+        <Filename Value="UGraphicView.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UGraphicView"/>
       </Unit7>
       <Unit8>
-        <Filename Value="ugraphic.pp"/>
+        <Filename Value="UGraphic.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UGraphic"/>
       </Unit8>
       <Unit9>
-        <Filename Value="ugraphicbase.pp"/>
+        <Filename Value="UGraphicBase.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UGraphicBase"/>
       </Unit9>
       <Unit10>
-        <Filename Value="utools.pp"/>
+        <Filename Value="UTools.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UTools"/>
       </Unit10>
       <Unit11>
-        <Filename Value="uundomanager.pp"/>
+        <Filename Value="UUndoManager.pp"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UUndoManager"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="UOptionsForm.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit12>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -113,6 +113,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>
