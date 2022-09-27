@@ -45,8 +45,10 @@ type
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure HandlePaint(Sender: TObject);
     procedure HandleResize(Sender: TObject);
+    procedure UIColorChanged(Sender: TObject);
 
     procedure InstallTools;
+    procedure RegisterUIColorHandlers;
 
   public
     destructor Destroy; override;
@@ -94,6 +96,7 @@ begin
   FViewTracking := TPointTool.Create(self);
   FToolMap := TToolMap.Create;
   InstallTools;
+  RegisterUIColorHandlers;
   ChooseTool('select');
 end;
 
@@ -112,6 +115,15 @@ begin
   FToolMap.Add('point', TPointTool.Create(self));
 end;
 
+procedure TGraphicView.RegisterUIColorHandlers;
+var
+  key: string;
+begin
+  for key in GraphicEnvirons.ColorSlotNames do
+  begin
+    GraphicEnvirons.ColorSlotMap[key].OnChange := @UIColorChanged;
+  end;
+end;
 
 procedure TGraphicView.ChooseTool(toolName: string);
 begin
@@ -163,7 +175,8 @@ end;
 
 procedure TGraphicView.HandlePaint(Sender: TObject);
 begin
-  // Canvas.Clear;
+  Canvas.Brush.Color := GraphicEnvirons.BackgroundColor.Value;
+  Canvas.Clear;
   if not Assigned(FGraphicDrawer) then
     exit;
   if ShowAxisLine then
@@ -235,6 +248,12 @@ procedure TGraphicView.DoOnResize;
 begin
   inherited DoOnResize;
   HandleResize(Self);
+end;
+
+
+procedure TGraphicView.UIColorChanged(Sender: TObject);
+begin
+  Invalidate;
 end;
 
 

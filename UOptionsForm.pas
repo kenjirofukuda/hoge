@@ -48,19 +48,19 @@ begin
     ALabel := TLabel.Create(ColorGroupBox);
     with ALabel do
     begin
-      Parent := ColorGroupBox;
       Name := key + 'Label';
       Caption := key;
+      Parent := ColorGroupBox;
     end;
     AColorBox := TColorBox.Create(ColorGroupBox);
     with AColorBox do
     begin
-      Parent := ColorGroupBox;
       Name := key;
       Style := [cbStandardColors, cbExtendedColors, cbCustomColor,
         cbCustomColors, cbPrettyNames];
       OnChange := @ColorBoxChange;
       Selected := GraphicEnvirons.ColorSlotMap.KeyData[key].Value;
+      Parent := ColorGroupBox;
     end;
   end;
   ColorGroupBox.AutoSize := True;
@@ -70,11 +70,9 @@ end;
 procedure TOptionsForm.ColorBoxChange(Sender: TObject);
 var
   AColorBox: TColorBox;
-  AKey: string;
 begin
   AColorBox := Sender as TColorBox;
-  AKey := AColorBox.Name;
-  GraphicEnvirons.ColorSlotMap.KeyData[AKey].Value := AColorBox.Selected;
+  GraphicEnvirons.ColorSlotMap[AColorBox.Name].Value := AColorBox.Selected;
 end;
 
 

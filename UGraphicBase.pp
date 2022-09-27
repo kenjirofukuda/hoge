@@ -100,11 +100,6 @@ var
   AColorSlot: TColorSlot;
   keys: array of string = ('Background', 'ExtentBounds', 'AxisLine', 'Point', 'SelectedHandle');
 begin
-  //FBackgroundColor := TColorSlot.Create;
-  //FExtentBoundsColor := TColorSlot.Create;
-  //FAxisLineColor := TColorSlot.Create;
-  //FPointColor := TColorSlot.Create;
-  //FSelectedHandleColor := TColorSlot.Create;
   FColorSlotMap := TColorSlotMap.Create;
   FSColorSlotNames := TSlotNames.Create;
   for key in keys do
@@ -125,12 +120,6 @@ destructor TGraphicEnvirons.Destroy;
 begin
   FreeAndNil(FColorSlotMap);
   FreeAndNil(FSColorSlotNames);
-
-  //FreeAndNil(FSelectedHandleColor);
-  //FreeAndNil(FPointColor);
-  //FreeAndNil(FAxisLineColor);
-  //FreeAndNil(FExtentBoundsColor);
-  //FreeAndNil(FBackgroundColor);
   inherited;
 end;
 
@@ -175,10 +164,6 @@ initialization
   GraphicEnvirons := TGraphicEnvirons.Create;
   with GraphicEnvirons do
   begin
-    BackgroundColor.Value := clNavy;
-    ExtentBoundsColor.Value := clLtGray;
-    AxisLineColor.Value := clWhite;
-    PointColor.Value := clRed;
     ColorSlotMap.KeyData['Background'].Value := clNavy;
     ColorSlotMap.KeyData['ExtentBounds'].Value := clLtGray;
     ColorSlotMap.KeyData['AxisLine'].Value := clWhite;

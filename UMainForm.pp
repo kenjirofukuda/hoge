@@ -93,8 +93,6 @@ type
     FGraphicDrawer: TGraphicDrawer;
     FGraphicView: TGraphicView;
     procedure DocumentChange(Sender: TObject);
-    procedure GraphicEnvironsChange(Sender: TObject);
-    procedure GenericRepaint(Sender: TObject);
     procedure UpdateMouseStatus(H, V: integer);
   end;
 
@@ -134,11 +132,7 @@ begin
     OnMouseMove := @GraphicViewMouseMove;
     OnResize := @GraphicViewResize;
   end;
-  GraphicEnvirons.BackgroundColor.OnChange := @GraphicEnvironsChange;
-  GraphicEnvirons.ExtentBoundsColor.OnChange := @GenericRepaint;
-  GraphicEnvirons.AxisLineColor.OnChange := @GenericRepaint;
-  GraphicEnvirons.PointColor.OnChange := @GenericRepaint;
-  GraphicEnvirons.SelectedHandleColor.OnChange := @GenericRepaint;
+
 
   {$IFNDEF DARWIN}
   UndoAction.ShortCut := ShortCut(VK_Z, [ssCtrl]);
@@ -325,15 +319,5 @@ begin
   FGraphicView.Invalidate;
 end;
 
-
-procedure TMainForm.GraphicEnvironsChange(Sender: TObject);
-begin
-  MainForm.Color := (Sender as TColorSlot).Value;
-end;
-
-procedure TMainForm.GenericRepaint(Sender: TObject);
-begin
-  MainForm.Invalidate;
-end;
 
 end.
