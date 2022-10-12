@@ -5,9 +5,9 @@ unit UMainForm;
 interface
 
 uses
-  Classes, SysUtils, Types, UDocument,
+  Classes, SysUtils, Types, UGraphicDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, ActnList, StdCtrls, UGraphicBase, UGraphicView,
+  Dialogs, LCLIntf, ActnList, StdCtrls, UGraphicEnvirons, UGraphicView,
   UOptionsForm;
 
 type
@@ -89,7 +89,7 @@ type
     procedure GraphicViewResize(Sender: TObject);
 
   private
-    FDocument: TDocument;
+    FDocument: TGraphicDocument;
     FGraphicDrawer: TGraphicDrawer;
     FGraphicView: TGraphicView;
     procedure DocumentChange(Sender: TObject);
@@ -103,7 +103,7 @@ var
 implementation
 
 uses
-  LCLType, UGraphicDrawer;
+  LCLType;
 
 {$R *.lfm}
 
@@ -111,16 +111,16 @@ uses
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  FDocument := TDocument.Create;
+  FDocument := TGraphicDocument.Create;
   FDocument.LoadFromDefault;
-  FGraphicDrawer := TGraphicDrawerImpl.Create;
+  FGraphicDrawer := TGraphicDrawer.Create;
   FDocument.OnChange := @DocumentChange;
 
   FGraphicView := TGraphicView.Create(self);
   with FGraphicView do
   begin
     Document := FDocument;
-    GraphicDrawer := FGraphicDrawer;
+    WorldDrawer := FGraphicDrawer;
     AnchorSideLeft.Control := Self;
     AnchorSideTop.Control := Self;
     AnchorSideRight.Control := Self;
@@ -232,7 +232,7 @@ end;
 
 procedure TMainForm.RevealAppConfigDirMenuItemClick(Sender: TObject);
 begin
-  OpenDocument(UDocument.AppConfigDir);
+  OpenDocument(FDocument.AppConfigDir);
 end;
 
 

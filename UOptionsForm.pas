@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ColorBox,
-  Grids, UGraphicBase;
+  Grids;
 
 type
   { TOptionsForm }
@@ -28,6 +28,9 @@ var
 implementation
 
 {$R *.lfm}
+
+uses
+  UGraphicEnvirons;
 
 { TOptionsForm }
 procedure TOptionsForm.CloseButtonClick(Sender: TObject);

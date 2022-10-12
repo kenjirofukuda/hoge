@@ -1,12 +1,11 @@
-unit UGraphicBase;
+unit UGraphicEnvirons;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, Types, Graphics, fgl,
-  UViewport, UGeometryUtils;
+  Classes, SysUtils, Types, Graphics, fgl;
 
 type
 
@@ -27,7 +26,6 @@ type
   TColorSlot = specialize TValueSlot<TColor>;
   TColorSlotMap = specialize TFPGMap<string, TColorSlot>;
   TSlotNames = specialize TFPGList<string>;
-  //TColorSlots = specialize
 
   TGraphicEnvirons = class
   private
@@ -52,42 +50,6 @@ type
     property ColorSlotMap: TColorSlotMap read FColorSlotMap;
   end;
 
-  TKFGraphic = class;
-
-  TGraphicList = specialize TFPGObjectList<TKFGraphic>;
-
-  TGraphicDrawer = class
-    abstract
-    constructor Create; virtual;
-
-  private
-    FViewport: TViewport;
-
-  public
-    destructor Destroy; override;
-    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList); virtual; abstract;
-    procedure DrawAxisLineOn(Canvas: TCanvas); virtual; abstract;
-    procedure FramePointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
-      virtual; abstract;
-    procedure FillPointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
-      virtual; abstract;
-    procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
-      virtual; abstract;
-    procedure FillHandle(Canvas: TCanvas; At: TPointF); virtual; abstract;
-
-    property Viewport: TViewport read FViewport;
-  end;
-
-  TKFGraphic = class
-    abstract
-  private
-    FSelected: boolean;
-  public
-    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
-    function Distance(APoint: TPointF): single; virtual; abstract;
-    function AsList: TGraphicList;
-    property Selected: boolean read FSelected write FSelected;
-  end;
 
 var
   GraphicEnvirons: TGraphicEnvirons;
@@ -98,7 +60,8 @@ constructor TGraphicEnvirons.Create;
 var
   key: string;
   AColorSlot: TColorSlot;
-  keys: array of string = ('Background', 'ExtentBounds', 'AxisLine', 'Point', 'SelectedHandle');
+  keys: array of string = ('Background', 'ExtentBounds', 'AxisLine',
+    'Point', 'SelectedHandle');
 begin
   FColorSlotMap := TColorSlotMap.Create;
   FSColorSlotNames := TSlotNames.Create;
@@ -138,27 +101,6 @@ begin
   Change;
 end;
 
-
-constructor TGraphicDrawer.Create;
-begin
-  FViewport := TViewport.Create;
-  FViewport.ResetWorld;
-  FViewport.ResetPortCenter;
-end;
-
-
-destructor TGraphicDrawer.Destroy;
-begin
-  FreeAndNil(FViewport);
-  inherited;
-end;
-
-
-function TKFGraphic.AsList: TGraphicList;
-begin
-  Result := TGraphicList.Create(False);
-  Result.Add(Self);
-end;
 
 initialization
   GraphicEnvirons := TGraphicEnvirons.Create;

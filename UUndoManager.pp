@@ -21,7 +21,6 @@ type
   private
     FRecorder: TUndoRedoGroup;
     FPlugged: boolean;
-    //FMaxSize: longint;
     FIndex: longint;
 
     function GetCurrent: THistoryLeaf;
@@ -132,7 +131,6 @@ type
     property OnRedo: TNotifyEvent read FRedo write FRedo;
     property OnUndo: TNotifyEvent read FUndo write FUndo;
   end;
-
 
 
 implementation
@@ -519,7 +517,6 @@ function TUndoRedoGroup.OpenGroup: boolean;
 begin
   Result := AddItem(TUndoRedoGroup.Create);
 end;
-
 
 
 function TUndoRedoGroup.DoIt: boolean;

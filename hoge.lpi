@@ -59,47 +59,47 @@
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="UDocument.pp"/>
+        <Filename Value="UGraphicDocument.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="UGraphicDrawer.pp"/>
+        <Filename Value="UViewport.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="UViewport.pp"/>
+        <Filename Value="UGeometryUtils.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="UGeometryUtils.pp"/>
+        <Filename Value="UGraphicView.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="UGraphicView.pp"/>
+        <Filename Value="UGraphicEnvirons.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="UGraphic.pp"/>
+        <Filename Value="UGraphicTools.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
       <Unit9>
-        <Filename Value="UGraphicBase.pp"/>
+        <Filename Value="UUndoManager.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
       <Unit10>
-        <Filename Value="UTools.pp"/>
-        <IsPartOfProject Value="True"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="UUndoManager.pp"/>
-        <IsPartOfProject Value="True"/>
-      </Unit11>
-      <Unit12>
         <Filename Value="UOptionsForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="UDocument.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="UWorldView.pp"/>
+        <IsPartOfProject Value="True"/>
       </Unit12>
     </Units>
   </ProjectOptions>
