@@ -21,6 +21,7 @@ type
 
     function GetBounds: TRectangleF;
     function GetSelectedCount: longint;
+    procedure LoadGraphic(items: TStringList);
 
   public
     destructor Destroy; override;
@@ -248,11 +249,7 @@ begin
   try
     for g in FGraphicList do
     begin
-      if g is TPointGraphic then
-      begin
-        point := g as TPointGraphic;
-        list.Add(Format('%f,%f', [point.x, point.y]));
-      end;
+      list.Add(g.ToCSVRecord);
     end;
     list.LineBreak := #10;
     list.SaveToFile(APath);
@@ -283,23 +280,50 @@ begin
       items.Clear;
       items.Delimiter := ',';
       items.DelimitedText := str;
-      if items.Count = 2 then
-      begin
-        s1 := Trim(items.Strings[0]);
-        s2 := Trim(items.Strings[1]);
-        try
-          x := StrToFloat(s1);
-          y := StrToFloat(s2);
-          AddPoint(x, y);
-        except
-          on E: EConvertError do
-            DebugLn('skip not a number');
-        end;
-      end;
+      LoadGraphic(items);
     end;
   finally
     items.Free;
     list.Free;
+  end;
+end;
+
+
+procedure TGraphicDocument.LoadGraphic(items: TStringList);
+var
+  s0, s1, s2, s3, s4: string;
+  v1, v2, v3, v4, v5: single;
+  g: TKFGraphic;
+begin
+  g := nil;
+  if items.Count >= 1 then
+  begin
+    s0 := Trim(items.Strings[0]);
+    try
+      if items.Count >= 3 then
+      begin
+        s1 := Trim(items.Strings[1]);
+        s2 := Trim(items.Strings[2]);
+        v1 := StrToFloat(s1);
+        v2 := StrToFloat(s2);
+        if s0.Equals('point') then
+          g := TPointGraphic.Create(v1, v2);
+      end;
+      if items.Count >= 5 then
+      begin
+        s3 := Trim(items.Strings[3]);
+        s4 := Trim(items.Strings[4]);
+        v3 := StrToFloat(s3);
+        v4 := StrToFloat(s4);
+        if s0.Equals('rect') then
+          g := TRectGraphic.Create(v1, v2, v3, v4);
+      end;
+      if g <> nil then
+        AddGraphic(g);
+    except
+      on E: EConvertError do
+        DebugLn('skip not a number');
+    end;
   end;
 end;
 

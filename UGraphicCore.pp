@@ -33,6 +33,9 @@ type
     function Distance(APoint: TPointF): single; virtual; abstract;
     function AsList: TGraphicList;
     function Bounds: TRectangleF; virtual; abstract;
+
+    function ToCSVRecord: string; virtual;
+
     property Selected: boolean read FSelected write FSelected;
   end;
 
@@ -50,6 +53,7 @@ type
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); override;
     function Distance(APoint: TPointF): single; override;
     function Bounds: TRectangleF; override;
+    function ToCSVRecord: string; override;
 
     property x: single read FPoint.x write FPoint.x;
     property y: single read FPoint.y write FPoint.y;
@@ -60,7 +64,7 @@ type
   { TRectGraphic }
 
   TRectGraphic = class(TKFGraphic)
-  private
+  protected
     FRectGeom: TRectangleF;
   public
     function Bounds: TRectangleF; override;
@@ -70,7 +74,7 @@ type
     procedure SetCorner(APoint: TPointF);
     procedure ValidateGeometry;
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); override;
-
+    function ToCSVRecord: string; override;
   end;
 
 
@@ -142,12 +146,25 @@ begin
   ADrawer.FrameBoundsOn(ACanvas, FRectGeom);
 end;
 
+function TRectGraphic.ToCSVRecord: string;
+begin
+  with FRectGeom do
+  begin
+    Result := Format('rect,%f,%f,%f,%f', [Origin.x, Origin.y, Corner.x, Corner.y]);;
+  end
+end;
+
 { TKFGraphic }
 
 function TKFGraphic.AsList: TGraphicList;
 begin
   Result := TGraphicList.Create(False);
   Result.Add(Self);
+end;
+
+function TKFGraphic.ToCSVRecord: string;
+begin
+  Result := '!!!Bang!!!';
 end;
 
 { TGraphicDrawer }
@@ -216,6 +233,11 @@ end;
 function TPointGraphic.Bounds: TRectangleF;
 begin
   Result := RectangleF(Origin, Origin);
+end;
+
+function TPointGraphic.ToCSVRecord: string;
+begin
+  Result := Format('point,%f,%f', [x, y]);
 end;
 
 

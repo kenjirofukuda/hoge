@@ -102,8 +102,7 @@ begin
     Canvas.Pen.Style := psDash;
     GraphicDrawer.FrameBoundsOn(Canvas, Document.Bounds);
   end;
-  GraphicDrawer
-    .DrawOn(Canvas, FFeedbacks, True);
+  GraphicDrawer.DrawOn(Canvas, FFeedbacks, True);
 end;
 
 
