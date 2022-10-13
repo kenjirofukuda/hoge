@@ -175,15 +175,12 @@ end;
 
 procedure TWorldDrawer.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
 var
-  hvOrigin: TPointF;
-  hvCorner: TPointF;
+  r: TRectangleF;
 begin
-  if not AWorldBounds.IsValid then
-    exit;
-  hvOrigin := Viewport.WorldToDevice(AWorldBounds.Origin.x, AWorldBounds.Origin.y);
-  hvCorner := Viewport.WorldToDevice(AWorldBounds.Corner.x, AWorldBounds.Corner.y);
-  Canvas.Frame(round(hvOrigin.x), round(hvCorner.y), round(hvCorner.x),
-    round(hvOrigin.y));
+  r := RectangleF(Viewport.WorldToDevice(AWorldBounds.Origin.x, AWorldBounds.Origin.y),
+    Viewport.WorldToDevice(AWorldBounds.Corner.x, AWorldBounds.Corner.y));
+  Canvas.Frame(round(r.Origin.x), round(r.Origin.y), round(r.Corner.x),
+    round(r.Corner.y));
 end;
 
 procedure TWorldDrawer.FillHandle(Canvas: TCanvas; At: TPointF);
@@ -220,6 +217,8 @@ end;
 
 procedure TWorldView.ChooseTool(toolName: string);
 begin
+  if Assigned(FViewTracking) then
+     FViewTracking.Reset;
   FViewTracking := FToolMap.KeyData[toolName];
   FViewTracking.Reset;
 end;

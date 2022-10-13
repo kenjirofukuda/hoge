@@ -18,7 +18,7 @@ type
 
   TGraphicDrawer = class(TWorldDrawer)
   public
-    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
+    procedure DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList; AFeedback: boolean);
     procedure DrawAxisLineOn(Canvas: TCanvas); override;
   end;
 
@@ -67,6 +67,8 @@ type
     constructor Create(X1, Y1, X2, Y2: single);
     constructor Create(P1, P2: TPointF);
     function Distance(APoint: TPointF): single; override;
+    procedure SetCorner(APoint: TPointF);
+    procedure ValidateGeometry;
     procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); override;
 
   end;
@@ -105,6 +107,17 @@ begin
   Result := dist;
 end;
 
+procedure TRectGraphic.SetCorner(APoint: TPointF);
+begin
+  FRectGeom.Corner := APoint;
+  // FRectGeom := RectangleF(FRectGeom.Origin, FRectGeom.Corner);
+end;
+
+procedure TRectGraphic.ValidateGeometry;
+begin
+  FRectGeom := RectangleF(FRectGeom.Origin, FRectGeom.Corner);
+end;
+
 procedure TRectGraphic.DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean);
 var
   savedColor: TColor;
@@ -118,7 +131,14 @@ begin
       ADrawer.FillHandle(ACanvas, p);
     ACanvas.Brush.Color := savedColor;
   end;
-  ACanvas.Pen.Color := clRed;
+  with ACanvas.Pen do
+  begin
+    Style := psSolid;
+    Color := GraphicEnvirons.PointColor.Value;
+    Width := 1;
+  end;
+  if AFeedback then
+    ACanvas.Pen.Color := clWhite;
   ADrawer.FrameBoundsOn(ACanvas, FRectGeom);
 end;
 
@@ -132,12 +152,13 @@ end;
 
 { TGraphicDrawer }
 
-procedure TGraphicDrawer.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList);
+procedure TGraphicDrawer.DrawOn(Canvas: TCanvas; AGraphicList: TGraphicList;
+  AFeedback: boolean);
 var
   g: TKFGraphic;
 begin
   for g in AGraphicList do
-    g.DrawOn(Canvas, self, false);
+    g.DrawOn(Canvas, self, AFeedback);
 end;
 
 procedure TGraphicDrawer.DrawAxisLineOn(Canvas: TCanvas);

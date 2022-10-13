@@ -33,6 +33,8 @@ type
   public
     constructor Create(AWorldView: TWorldView);
     destructor Destroy; override;
+
+    procedure TrackMove(Shift: TShiftState; X, Y: integer); override;
     procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
     procedure Reset; override;
@@ -63,18 +65,43 @@ begin
   inherited Destroy;
 end;
 
+procedure TRectTool.TrackMove(Shift: TShiftState; X, Y: integer);
+var
+  g: TKFGraphic;
+begin
+  inherited TrackMove(Shift, X, Y);
+  g := GraphicView.GetFeedBack1;
+  if g = nil then Exit;
+  (g as TRectGraphic).SetCorner(ToWorldPoint(X, Y));
+  GraphicView.Invalidate;
+end;
+
 procedure TRectTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+var
+  g: TKFGraphic;
 begin
   inherited;
   if Button = mbLeft then
   begin
     FPoints.Add(ToWorldPoint(X, Y));
+    if FPoints.Count = 1 then
+    begin
+      GraphicView.AddFeedback(
+        TRectGraphic.Create(FPoints.Items[0], FPoints.Items[0]));
+    end;
+
     if FPoints.Count = 2 then
     begin
+      g := GraphicView.GetFeedBack1;
+      if g = nil then Exit;
+      with (g as TRectGraphic) do
+      begin
+        SetCorner(ToWorldPoint(X, Y));
+        ValidateGeometry;
+      end;
       GraphicView.Document.UndoManager.DoAndAddRecord(
-        TAddGraphicsCommand.Create(GraphicView.Document,
-        TRectGraphic.Create(FPoints.Items[0], FPoints.Items[1])));
-      FPoints.Clear;
+        TAddGraphicsCommand.Create(GraphicView.Document, g));
+      Reset;
     end;
   end;
 end;
@@ -83,6 +110,7 @@ procedure TRectTool.Reset;
 begin
   inherited Reset;
   FPoints.Clear;
+  GraphicView.ClearFeedback;
 end;
 
 { TGraphicTool }
