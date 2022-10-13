@@ -4,7 +4,7 @@ object MainForm: TMainForm
   Top = 459
   Width = 680
   Caption = 'Points View'
-  ClientHeight = 458
+  ClientHeight = 455
   ClientWidth = 680
   Color = clNavy
   Menu = MainMenu
@@ -14,8 +14,8 @@ object MainForm: TMainForm
   LCLVersion = '2.2.2.0'
   object StatusBar: TStatusBar
     Left = 0
-    Height = 24
-    Top = 434
+    Height = 18
+    Top = 437
     Width = 680
     Panels = <>
     ParentColor = False
@@ -63,6 +63,10 @@ object MainForm: TMainForm
       object PointMenuItem: TMenuItem
         Caption = 'Point'
         OnClick = PointMenuItemClick
+      end
+      object RectMenuItem: TMenuItem
+        Caption = 'Rect'
+        OnClick = RectMenuItemClick
       end
     end
     object DebugMenu: TMenuItem

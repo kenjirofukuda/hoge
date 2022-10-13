@@ -9,6 +9,7 @@ uses
 
 type
 
+  TPointF4 = array [0..3] of TPointF;
   { Smalltalk style }
   TRectangleF = object
     Origin: TPointF;
@@ -24,11 +25,11 @@ type
     property Width: single read GetWidth;
     property Height: single read GetHeight;
     property Extent: TPointF read GetExtent;
+    function CornerPoints: TPointF4;
   end;
 
   TXYPointList = specialize TFPGList<TPointF>;
   THVPointList = specialize TFPGList<TPoint>;
-
 
 function MidValue(V1, V2: single): single; inline;
 
@@ -121,6 +122,14 @@ begin
   Result.Origin.y := single.MaxValue;
   Result.Corner.x := single.MinValue;
   Result.Corner.y := single.MinValue;
+end;
+
+function TRectangleF.CornerPoints: TPointF4;
+begin
+  Result[0] := Origin;
+  Result[1] := PointF(Origin.x, Corner.y);
+  Result[2] := Corner;
+  Result[3] := PointF(Corner.x, Origin.y);
 end;
 
 end.

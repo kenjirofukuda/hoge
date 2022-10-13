@@ -248,8 +248,11 @@ begin
   try
     for g in FGraphicList do
     begin
-      point := g as TPointGraphic;
-      list.Add(Format('%f,%f', [point.x, point.y]));
+      if g is TPointGraphic then
+      begin
+        point := g as TPointGraphic;
+        list.Add(Format('%f,%f', [point.x, point.y]));
+      end;
     end;
     list.LineBreak := #10;
     list.SaveToFile(APath);
@@ -310,8 +313,7 @@ begin
   rect := EmptyRectangleF;
   for g in FGraphicList do
   begin
-    point := g as TPointGraphic;
-    rect := rect.Merge(RectangleF(point.Origin, point.Origin));
+    rect := rect.Merge(g.Bounds);
   end;
   Result := rect;
 end;

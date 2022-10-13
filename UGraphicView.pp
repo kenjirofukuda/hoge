@@ -51,6 +51,7 @@ procedure TGraphicView.InstallTools;
 begin
   FToolMap.Add('select', TSelectTool.Create(self));
   FToolMap.Add('point', TPointTool.Create(self));
+  FToolMap.Add('rect', TRectTool.Create(self));
 end;
 
 

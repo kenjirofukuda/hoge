@@ -87,6 +87,7 @@ type
   public
     constructor Create(AWorldView: TWorldView);
     destructor Destroy; override;
+    procedure Reset; virtual;
 
     procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
       virtual;
@@ -220,6 +221,7 @@ end;
 procedure TWorldView.ChooseTool(toolName: string);
 begin
   FViewTracking := FToolMap.KeyData[toolName];
+  FViewTracking.Reset;
 end;
 
 
@@ -347,6 +349,12 @@ destructor TViewTracking.Destroy;
 begin
   FreeAndNil(FMovePoints);
   inherited Destroy;
+end;
+
+procedure TViewTracking.Reset;
+begin
+  FMovePoints.Clear;
+  FMiddleDown := False;
 end;
 
 procedure TViewTracking.TrackBegin(Button: TMouseButton; Shift: TShiftState;

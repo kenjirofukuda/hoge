@@ -29,34 +29,98 @@ type
   private
     FSelected: boolean;
   public
-    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); virtual; abstract;
+    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); virtual; abstract;
     function Distance(APoint: TPointF): single; virtual; abstract;
     function AsList: TGraphicList;
+    function Bounds: TRectangleF; virtual; abstract;
     property Selected: boolean read FSelected write FSelected;
   end;
 
   { TKFGraphic }
 
+  { TPointGraphic }
+
   TPointGraphic = class(TKFGraphic)
+  private
+    FPoint: TPointF;
+  public
     constructor Create(APoint: TPointF);
     constructor Create(X, Y: single);
 
-  private
-    FPoint: TPointF;
-
-  public
-    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer); override;
+    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); override;
     function Distance(APoint: TPointF): single; override;
+    function Bounds: TRectangleF; override;
 
     property x: single read FPoint.x write FPoint.x;
     property y: single read FPoint.y write FPoint.y;
     property Origin: TPointF read FPoint;
   end;
 
+
+  { TRectGraphic }
+
+  TRectGraphic = class(TKFGraphic)
+  private
+    FRectGeom: TRectangleF;
+  public
+    function Bounds: TRectangleF; override;
+    constructor Create(X1, Y1, X2, Y2: single);
+    constructor Create(P1, P2: TPointF);
+    function Distance(APoint: TPointF): single; override;
+    procedure DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean); override;
+
+  end;
+
+
 implementation
 
 uses
-  UGraphicTools,UGraphicEnvirons;
+  Math, UGraphicTools, UGraphicEnvirons;
+
+{ TRectGraphic }
+
+function TRectGraphic.Bounds: TRectangleF;
+begin
+  Result := FRectGeom;
+end;
+
+constructor TRectGraphic.Create(X1, Y1, X2, Y2: single);
+begin
+  FRectGeom := RectangleF(X1, Y1, X2, Y2);
+end;
+
+constructor TRectGraphic.Create(P1, P2: TPointF);
+begin
+  FRectGeom := RectangleF(P1, P2);
+end;
+
+function TRectGraphic.Distance(APoint: TPointF): single;
+var
+  dist: single;
+  p: TPointF;
+begin
+  dist := MaxSingle;
+  for p in FRectGeom.CornerPoints do
+    dist := Min(dist, p.Distance(APoint));
+  Result := dist;
+end;
+
+procedure TRectGraphic.DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean);
+var
+  savedColor: TColor;
+  p: TPointF;
+begin
+  if Selected then
+  begin
+    savedColor := ACanvas.Brush.Color;
+    ACanvas.Brush.Color := GraphicEnvirons.SelectedHandleColor.Value;
+    for p in FRectGeom.CornerPoints do
+      ADrawer.FillHandle(ACanvas, p);
+    ACanvas.Brush.Color := savedColor;
+  end;
+  ACanvas.Pen.Color := clRed;
+  ADrawer.FrameBoundsOn(ACanvas, FRectGeom);
+end;
 
 { TKFGraphic }
 
@@ -73,7 +137,7 @@ var
   g: TKFGraphic;
 begin
   for g in AGraphicList do
-    g.DrawOn(Canvas, self);
+    g.DrawOn(Canvas, self, false);
 end;
 
 procedure TGraphicDrawer.DrawAxisLineOn(Canvas: TCanvas);
@@ -103,7 +167,7 @@ begin
 end;
 
 
-procedure TPointGraphic.DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer);
+procedure TPointGraphic.DrawOn(ACanvas: TCanvas; ADrawer: TGraphicDrawer; AFeedback: boolean);
 const
   UNIT_SIZE = 3;
 var
@@ -126,6 +190,11 @@ end;
 function TPointGraphic.Distance(APoint: TPointF): single;
 begin
   Result := FPoint.Distance(APoint);
+end;
+
+function TPointGraphic.Bounds: TRectangleF;
+begin
+  Result := RectangleF(Origin, Origin);
 end;
 
 

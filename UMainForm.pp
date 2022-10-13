@@ -19,6 +19,7 @@ type
     MenuItem5: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    RectMenuItem: TMenuItem;
 
     StatusBar: TStatusBar;
 
@@ -64,6 +65,7 @@ type
     procedure DeselectAllActionExecute(Sender: TObject);
     procedure DeselectAllActionUpdate(Sender: TObject);
     procedure OptionsMenuItemClick(Sender: TObject);
+    procedure RectMenuItemClick(Sender: TObject);
     procedure RedoActionExecute(Sender: TObject);
     procedure RedoActionUpdate(Sender: TObject);
     procedure SelectAllActionExecute(Sender: TObject);
@@ -274,10 +276,15 @@ begin
   FGraphicView.ChooseTool('select');
 end;
 
-
 procedure TMainForm.PointMenuItemClick(Sender: TObject);
 begin
   FGraphicView.ChooseTool('point');
+end;
+
+
+procedure TMainForm.RectMenuItemClick(Sender: TObject);
+begin
+  FGraphicView.ChooseTool('rect');
 end;
 
 
