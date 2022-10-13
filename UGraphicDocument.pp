@@ -8,7 +8,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, Types, LazFileUtils, LazLogger, fgl,
-  UGeometryUtils, UDocument, UGraphicView;
+  UGeometryUtils, UDocument, UGraphicCore;
 
 type
   { TGraphicDocument }

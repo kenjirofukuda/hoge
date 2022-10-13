@@ -23,7 +23,7 @@ type
 implementation
 
 uses
-  UGraphicEnvirons, UGraphicDocument, UGraphicView;
+  UGraphicEnvirons, UGraphicDocument, UGraphicView, UGraphicCore;
 
 procedure TPointTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var

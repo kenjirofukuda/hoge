@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Types, UGraphicDocument,
   Forms, Controls, Menus, ExtCtrls, ComCtrls,
-  Dialogs, LCLIntf, ActnList, StdCtrls, UGraphicEnvirons, UGraphicView,
+  Dialogs, LCLIntf, ActnList, UGraphicEnvirons, UGraphicView, UGraphicCore,
   UOptionsForm;
 
 type
