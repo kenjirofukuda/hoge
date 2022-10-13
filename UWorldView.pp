@@ -52,7 +52,6 @@ type
       MousePos: TPoint): boolean; override;
 
   protected
-    FDocument: TDocument;
     FWorldDrawer: TWorldDrawer;
     FViewTracking: TViewTracking;
     FFirstResizeHandled: boolean;
@@ -76,7 +75,6 @@ type
 
     procedure ChooseTool(toolName: string);
 
-    property Document: TDocument read FDocument write FDocument;
     property WorldDrawer: TWorldDrawer read FWorldDrawer write FWorldDrawer;
     property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
     property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
@@ -87,7 +85,7 @@ type
 
   TViewTracking = class
   public
-    constructor Create(AGraphicView: TWorldView);
+    constructor Create(AWorldView: TWorldView);
     destructor Destroy; override;
 
     procedure TrackBegin(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
@@ -250,8 +248,8 @@ procedure TWorldView.HandleMouseUp(Sender: TObject; Button: TMouseButton;
 begin
   if not Assigned(FWorldDrawer) then
     exit;
-  if not Assigned(FDocument) then
-    exit;
+  //if not Assigned(FDocument) then
+  //  exit;
   if Assigned(FViewTracking) then
     FViewTracking.TrackEnd(Button, Shift, X, Y);
 end;
@@ -336,9 +334,9 @@ begin
 end;
 
 
-constructor TViewTracking.Create(AGraphicView: TWorldView);
+constructor TViewTracking.Create(AWorldView: TWorldView);
 begin
-  FWorldView := AGraphicView;
+  FWorldView := AWorldView;
   if not Assigned(FMovePoints) then
     FMovePoints := THVPointList.Create;
   FMovePoints.Clear;
@@ -351,8 +349,8 @@ begin
   inherited Destroy;
 end;
 
-procedure TViewTracking.TrackBegin(Button: TMouseButton; Shift: TShiftState; X,
-  Y: integer);
+procedure TViewTracking.TrackBegin(Button: TMouseButton; Shift: TShiftState;
+  X, Y: integer);
 begin
   if Button = mbMiddle then
   begin
@@ -371,8 +369,8 @@ begin
   ViewMove(Shift, X, Y);
 end;
 
-procedure TViewTracking.TrackEnd(Button: TMouseButton; Shift: TShiftState; X,
-  Y: integer);
+procedure TViewTracking.TrackEnd(Button: TMouseButton; Shift: TShiftState;
+  X, Y: integer);
 begin
   FMiddleDown := False;
 end;

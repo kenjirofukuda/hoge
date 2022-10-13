@@ -6,15 +6,25 @@ unit UGraphicTools;
 interface
 
 uses
-  Classes, SysUtils, Controls, Types, UWorldView;
+  Classes, SysUtils, Controls, Types, UWorldView, UGraphicView;
 
 type
-  TPointTool = class(TViewTracking)
+
+  { TGraphicTool }
+
+  TGraphicTool = class(TViewTracking)
+  private
+    function GetGraphicView: TGraphicView;
+  public
+    property GraphicView: TGraphicView read GetGraphicView;
+  end;
+
+  TPointTool = class(TGraphicTool)
     procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
   end;
 
-  TSelectTool = class(TViewTracking)
+  TSelectTool = class(TGraphicTool)
     procedure TrackEnd(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
   end;
@@ -23,7 +33,14 @@ type
 implementation
 
 uses
-  UGraphicEnvirons, UGraphicDocument, UGraphicView, UGraphicCore;
+  UGraphicEnvirons, UGraphicDocument, UGraphicCore;
+
+{ TGraphicTool }
+
+function TGraphicTool.GetGraphicView: TGraphicView;
+begin
+  Result := (FWorldView as TGraphicView);
+end;
 
 procedure TPointTool.TrackEnd(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
@@ -32,9 +49,9 @@ begin
   inherited;
   if Button = mbLeft then
   begin
-    xyPoint := FWorldView.WorldDrawer.Viewport.DeviceToWorld(X, Y);
-    FWorldView.Document.UndoManager.DoAndAddRecord(
-      TAddGraphicsCommand.Create((FWorldView.Document as TGraphicDocument),
+    xyPoint := GraphicView.WorldDrawer.Viewport.DeviceToWorld(X, Y);
+    GraphicView.Document.UndoManager.DoAndAddRecord(
+      TAddGraphicsCommand.Create(GraphicView.Document,
       TPointGraphic.Create(xyPoint.x, xyPoint.y)));
   end;
 end;
@@ -50,9 +67,9 @@ begin
   inherited;
   if Button = mbLeft then
   begin
-    xyPoint := FWorldView.WorldDrawer.Viewport.DeviceToWorld(X, Y);
-    g := (FWorldView.Document as TGraphicDocument).FindGraphicAt(xyPoint,
-      SENSOR_RADIUS, FWorldView.WorldDrawer.Viewport.WorldScale);
+    xyPoint := GraphicView.WorldDrawer.Viewport.DeviceToWorld(X, Y);
+    g := GraphicView.Document.FindGraphicAt(xyPoint,
+      SENSOR_RADIUS, GraphicView.WorldDrawer.Viewport.WorldScale);
     if g <> nil then
     begin
       g.Selected := not g.Selected;
