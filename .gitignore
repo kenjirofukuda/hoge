@@ -28,10 +28,3 @@ lib/
 
 # Application bundle for Mac OS
 *.app/
-
-# Other
-hoge
-.DS_Store
-test/fpcunithoge
-*.obj
-test/fpcunithoge.fpcunit.ini
