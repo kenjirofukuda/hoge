@@ -1,21 +1,21 @@
 object MainForm: TMainForm
-  Left = 650
+  Left = 715
   Height = 480
-  Top = 459
+  Top = 881
   Width = 680
   Caption = 'Points View'
-  ClientHeight = 455
+  ClientHeight = 480
   ClientWidth = 680
   Color = clNavy
   Menu = MainMenu
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poScreenCenter
-  LCLVersion = '2.2.2.0'
+  LCLVersion = '3.0.0.3'
   object StatusBar: TStatusBar
     Left = 0
-    Height = 18
-    Top = 437
+    Height = 19
+    Top = 461
     Width = 680
     Panels = <>
     ParentColor = False

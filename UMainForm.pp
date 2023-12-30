@@ -107,9 +107,9 @@ implementation
 uses
   LCLType;
 
-{$R *.lfm}
+  {$R *.lfm}
 
-{ TMainForm }
+  { TMainForm }
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
