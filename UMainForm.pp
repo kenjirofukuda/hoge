@@ -115,10 +115,10 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDocument := TGraphicDocument.Create;
   FDocument.LoadFromDefault;
-  FGraphicDrawer := TGraphicDrawer.Create;
+  FGraphicView := TGraphicView.Create(self);
+  FGraphicDrawer := TGraphicDrawer.Create(FGraphicView.Viewport);
   FDocument.OnChange := @DocumentChange;
 
-  FGraphicView := TGraphicView.Create(self);
   with FGraphicView do
   begin
     Document := FDocument;
@@ -132,10 +132,8 @@ begin
     Visible := True;
     Parent := Self;
     OnMouseMove := @GraphicViewMouseMove;
-    OnResize := @GraphicViewResize;
+    OnResize := @GraphicViewResize; // override HandleResize
   end;
-
-
   {$IFNDEF DARWIN}
   UndoAction.ShortCut := ShortCut(VK_Z, [ssCtrl]);
   RedoAction.ShortCut := ShortCut(VK_Z, [ssShift, ssCtrl]);
@@ -196,8 +194,8 @@ procedure TMainForm.InstallSampleGraphicsActionExecute(Sender: TObject);
 var
   p1, p2: TPointF;
 begin
-  p1 := FGraphicDrawer.Viewport.DeviceToWorld(0, FGraphicDrawer.Viewport.PortHeight);
-  p2 := FGraphicDrawer.Viewport.DeviceToWorld(FGraphicDrawer.Viewport.PortWidth, 0);
+  p1 := FGraphicView.Viewport.DeviceToWorld(0, FGraphicView.Viewport.PortHeight);
+  p2 := FGraphicView.Viewport.DeviceToWorld(FGraphicView.Viewport.PortWidth, 0);
   FDocument.InstallSampleGraphics(p1.x, p1.y, p2.x, p2.y);
 end;
 
@@ -266,7 +264,7 @@ end;
 
 procedure TMainForm.ViewFitActionExecute(Sender: TObject);
 begin
-  FGraphicDrawer.Viewport.SetWorldBounds(FDocument.Bounds);
+  FGraphicView.Viewport.SetWorldBounds(FDocument.Bounds);
   FGraphicView.Invalidate;
 end;
 
@@ -298,6 +296,7 @@ end;
 
 procedure TMainForm.GraphicViewResize(Sender: TObject);
 begin
+  FGraphicView.HandleResize(Sender);
   StatusBar.SimpleText := Format('W: %4d, H: %4d',
     [FGraphicView.ClientWidth, FGraphicView.ClientHeight]);
 end;
@@ -308,7 +307,7 @@ var
   pt: TPointF;
   strs: TStringList;
 begin
-  pt := FGraphicDrawer.Viewport.DeviceToWorld(H, V);
+  pt := FGraphicView.Viewport.DeviceToWorld(H, V);
   strs := TStringList.Create;
   strs.Delimiter := ' ';
   strs.QuoteChar := ' ';

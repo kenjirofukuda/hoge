@@ -5,9 +5,9 @@ unit UWorldView;
 interface
 
 uses
-  Classes, SysUtils, Types, Graphics, fgl, UGeometryUtils, UDocument,
-  Controls, Menus, ExtCtrls,
-  Dialogs, LCLIntf, UViewport;
+  Classes, SysUtils, Types, Graphics, fgl,
+  Controls, Menus, ExtCtrls, Dialogs, LCLIntf,
+  UGeometryUtils, UViewport;
 
 type
   TViewTracking = class;
@@ -16,7 +16,7 @@ type
   { TWorldDrawer }
 
   TWorldDrawer = class
-    constructor Create; virtual;
+    constructor Create(AViewport: TViewport); virtual;
 
   protected
     FViewport: TViewport;
@@ -30,19 +30,15 @@ type
       virtual;
     procedure FillPointOn(Canvas: TCanvas; AWorldPoint: TPointF; AUnitSize: integer);
       virtual;
-    procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
-      virtual;
+    procedure FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF); virtual;
     procedure FillHandle(Canvas: TCanvas; At: TPointF); virtual;
 
-    property Viewport: TViewport read FViewport;
+    property Viewport: TViewport read FViewport write FViewport;
   end;
 
 
   TWorldView = class(TPaintBox)
     constructor Create(AOwner: TComponent); override;
-
-    procedure Paint; override;
-    procedure DoOnResize; override;
 
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: integer); override;
@@ -52,6 +48,7 @@ type
       MousePos: TPoint): boolean; override;
 
   protected
+    FViewport: TViewport;
     FWorldDrawer: TWorldDrawer;
     FViewTracking: TViewTracking;
     FFirstResizeHandled: boolean;
@@ -69,13 +66,14 @@ type
       WheelDelta: integer; MousePos: TPoint; var Handled: boolean);
     procedure HandlePaint(Sender: TObject); virtual;
     procedure HandleResize(Sender: TObject);
-
+    procedure SetWorldDrawer(ADrawer: TWorldDrawer);
   public
     destructor Destroy; override;
 
     procedure ChooseTool(toolName: string);
 
-    property WorldDrawer: TWorldDrawer read FWorldDrawer write FWorldDrawer;
+    property Viewport: TViewport read FViewport;
+    property WorldDrawer: TWorldDrawer read FWorldDrawer write SetWorldDrawer;
     property ShowExtentBounds: boolean read FShowExtentBounds write FShowExtentBounds;
     property ShowAxisLine: boolean read FShowAxisLine write FShowAxisLine;
 
@@ -109,19 +107,18 @@ type
 
 implementation
 
-constructor TWorldDrawer.Create;
+constructor TWorldDrawer.Create(AViewport: TViewport);
 begin
-  FViewport := TViewport.Create;
-  FViewport.ResetWorld;
-  FViewport.ResetPortCenter;
+  inherited Create;
+  FViewport := AViewport;
 end;
 
 
 destructor TWorldDrawer.Destroy;
 begin
-  FreeAndNil(FViewport);
   inherited;
 end;
+
 
 procedure TWorldDrawer.VLine(Canvas: TCanvas; AXValue: single);
 var
@@ -200,16 +197,20 @@ end;
 constructor TWorldView.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FViewport := TViewport.Create;
   FShowExtentBounds := False;
   FShowAxisLine := True;
   FViewTracking := TViewTracking.Create(self);
   FToolMap := TToolMap.Create;
+  OnPaint := @HandlePaint;
+  OnResize := @HandleResize;
 end;
 
 
 destructor TWorldView.Destroy;
 begin
   FViewTracking := nil;
+  FreeAndNil(FViewport);
   FreeAndNil(FToolMap);
   inherited Destroy;
 end;
@@ -218,7 +219,7 @@ end;
 procedure TWorldView.ChooseTool(toolName: string);
 begin
   if Assigned(FViewTracking) then
-     FViewTracking.Reset;
+    FViewTracking.Reset;
   FViewTracking := FToolMap.KeyData[toolName];
   FViewTracking.Reset;
 end;
@@ -249,8 +250,6 @@ procedure TWorldView.HandleMouseUp(Sender: TObject; Button: TMouseButton;
 begin
   if not Assigned(FWorldDrawer) then
     exit;
-  //if not Assigned(FDocument) then
-  //  exit;
   if Assigned(FViewTracking) then
     FViewTracking.TrackEnd(Button, Shift, X, Y);
 end;
@@ -281,16 +280,23 @@ end;
 
 procedure TWorldView.HandleResize(Sender: TObject);
 begin
-  if not Assigned(FWorldDrawer) then
-    exit;
-  FWorldDrawer.Viewport.SetPortSize(ClientWidth, ClientHeight);
+  Viewport.SetPortSize(ClientWidth, ClientHeight);
   if not FFirstResizeHandled then
   begin
-    FWorldDrawer.Viewport.ResetPortCenter;
+    Viewport.ResetPortCenter;
     FFirstResizeHandled := True;
   end;
 end;
 
+procedure TWorldView.SetWorldDrawer(ADrawer: TWorldDrawer);
+begin
+  if Assigned(FWorldDrawer) then
+    exit;
+  ADrawer.Viewport := FViewport;
+  FWorldDrawer := ADrawer;
+  FViewport.ResetWorld;
+  FViewport.ResetPortCenter;
+end;
 
 procedure TWorldView.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 begin
@@ -318,20 +324,6 @@ function TWorldView.DoMouseWheel(Shift: TShiftState; WheelDelta: integer;
 begin
   Result := inherited DoMouseWheel(Shift, WheelDelta, MousePos);
   HandleMouseWheel(self, Shift, WheelDelta, MousePos, Result);
-end;
-
-
-procedure TWorldView.Paint;
-begin
-  HandlePaint(self);
-  inherited Paint;
-end;
-
-
-procedure TWorldView.DoOnResize;
-begin
-  inherited DoOnResize;
-  HandleResize(Self);
 end;
 
 
