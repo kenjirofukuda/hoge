@@ -37,7 +37,7 @@ type
   end;
 
 
-  TWorldView = class(TPaintBox)
+  TWorldView = class(TPanel)
     constructor Create(AOwner: TComponent); override;
 
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -163,11 +163,15 @@ procedure TWorldDrawer.FillPointOn(Canvas: TCanvas; AWorldPoint: TPointF;
   AUnitSize: integer);
 var
   hvPoint: TPointF;
+  savedColor: TColor;
 begin
   // TODO: FIXME
+  savedColor := Canvas.Brush.Color;
+  Canvas.Brush.Color := Canvas.Pen.Color;
   hvPoint := Viewport.WorldToDevice(AWorldPoint.x, AWorldPoint.y);
   Canvas.Ellipse(round(hvPoint.x - AUnitSize), round(hvPoint.y - AUnitSize),
     round(hvPoint.x + AUnitSize), round(hvPoint.y + AUnitSize));
+  Canvas.Brush.Color := savedColor;
 end;
 
 procedure TWorldDrawer.FrameBoundsOn(Canvas: TCanvas; AWorldBounds: TRectangleF);
@@ -198,6 +202,8 @@ constructor TWorldView.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FViewport := TViewport.Create;
+  FViewport.ResetWorld;
+  FViewport.ResetPortCenter;
   FShowExtentBounds := False;
   FShowAxisLine := True;
   FViewTracking := TViewTracking.Create(self);
@@ -294,8 +300,6 @@ begin
     exit;
   ADrawer.Viewport := FViewport;
   FWorldDrawer := ADrawer;
-  FViewport.ResetWorld;
-  FViewport.ResetPortCenter;
 end;
 
 procedure TWorldView.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: integer);
@@ -383,7 +387,7 @@ begin
     direction := -1.0
   else
     direction := 1.0;
-  FWorldView.WorldDrawer.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
+  FWorldView.Viewport.WheelZoom(MousePos.x, MousePos.y, direction);
   FWorldView.Invalidate;
 end;
 

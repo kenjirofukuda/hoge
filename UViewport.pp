@@ -14,6 +14,8 @@ const
 type
   TMatrixList = array [0 .. 99] of TAffineMatrix;
 
+  { TViewport }
+
   TViewport = class
     constructor Create;
 
@@ -46,28 +48,30 @@ type
     procedure SetPortCenter(H, V: integer);
     function GetPortCenter: TPoint;
     procedure ResetPortCenter;
+    property PortHeight: longint read FPortHeight;
+    property PortWidth: longint read FPortWidth;
+    property WorldScale: single read FWorldScale;
 
     {World Operations}
     procedure SetWorldCenter(X, Y: single);
     procedure OffSetWorldCenter(DeltaX, DeltaY: single);
+    procedure ViewMoveFraction(AXFraction, AYFraction: single);
     procedure SetWorldScale(scale: single);
+    procedure SetWorldBounds(X1, Y1, X2, Y2: single);
+    procedure SetWorldBounds(AWorldBounds: TRectangleF);
+    function GetWorldBounds: TRectangleF;
     procedure ResetWorld;
 
     procedure PushTransform(t: TAffineMatrix);
     function PopTransform: TAffineMatrix;
-
+    property PushedTransformCount: Integer read FTransformCount;
     function FittingTransform(X1, Y1, X2, Y2: single): TAffineMatrix;
     function Transform: TAffineMatrix;
-    procedure SetWorldBounds(X1, Y1, X2, Y2: single);
-    procedure SetWorldBounds(AWorldBounds: TRectangleF);
 
     function WorldToDevice(X, Y: single): TPointF;
     function DeviceToWorld(H, V: single): TPointF;
     procedure WheelZoom(H, V: integer; X, Y: single; Direction: single);
     procedure WheelZoom(H, V: integer; Direction: single);
-    property PortHeight: longint read FPortHeight;
-    property PortWidth: longint read FPortWidth;
-    property WorldScale: single read FWorldScale;
   end;
 
 
@@ -86,7 +90,6 @@ end;
 
 procedure TViewport.SetPortWidth(Width: integer);
 begin
-  DebugLn(IntToStr(Width));
   if Width <> FPortWidth then
   begin
     FPortWidth := Width;
@@ -97,7 +100,6 @@ end;
 
 procedure TViewport.SetPortHeight(Height: integer);
 begin
-  DebugLn(IntToStr(Height));
   if Height <> FPortHeight then
   begin
     FPortHeight := Height;
@@ -126,6 +128,18 @@ end;
 procedure TViewport.OffSetWorldCenter(DeltaX, DeltaY: single);
 begin
   SetWorldCenter(FWorldCenter.x + DeltaX, FWorldCenter.y + DeltaY);
+end;
+
+
+procedure TViewport.ViewMoveFraction(AXFraction, AYFraction: single);
+var
+  wBounds: TRectangleF;
+  xDelta, yDelta: single;
+begin
+  wBounds := GetWorldBounds;
+  xDelta := wBounds.Width * AXFraction;
+  yDelta := wBounds.Height * AYFraction;
+  OffSetWorldCenter(xDelta, yDelta);
 end;
 
 
@@ -158,7 +172,6 @@ function TViewport.LookupBasicTransform: TAffineMatrix;
 var
   tx: TAffineMatrix;
 begin
-  // tx := AffineMatrixIdentity;
   tx := AffineMatrixTranslation(FPortCenter.x, (FPortHeight - FPortCenter.y));
   tx *= AffineMatrixScale(FWorldScale, -FWorldScale);
   tx *= AffineMatrixTranslation(-FWorldCenter.x, -FWorldCenter.y);
@@ -250,6 +263,16 @@ begin
     exit;
   SetWorldBounds(AWorldBounds.Origin.x, AWorldBounds.Origin.y,
     AWorldBounds.Corner.x, AWorldBounds.Corner.y);
+end;
+
+
+function TViewport.GetWorldBounds: TRectangleF;
+var
+  origin, corner: TPointF;
+begin
+  origin := DeviceToWorld(0, PortHeight);
+  corner := DeviceToWorld(PortWidth, 0);
+  Result := RectangleF(origin, corner);
 end;
 
 
