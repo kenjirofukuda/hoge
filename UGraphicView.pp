@@ -22,6 +22,7 @@ type
     destructor Destroy; override;
 
     procedure HandlePaint(Sender: TObject); override;
+    function GetFitBounds: TRectangleF; override;
     procedure UIColorChanged(Sender: TObject);
 
     procedure AddFeedback(AGraphic: TKFGraphic);
@@ -103,6 +104,14 @@ begin
     GraphicDrawer.FrameBoundsOn(Canvas, Document.Bounds);
   end;
   GraphicDrawer.DrawOn(Canvas, FFeedbacks, True);
+end;
+
+
+function TGraphicView.GetFitBounds: TRectangleF;
+begin
+  Result := inherited GetFitBounds;
+  if Document.GetGraphics.Count > 0 then
+     Result := Document.Bounds;
 end;
 
 

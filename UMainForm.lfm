@@ -1,10 +1,10 @@
 object MainForm: TMainForm
-  Left = 715
-  Height = 480
-  Top = 881
+  Left = 2363
+  Height = 530
+  Top = 787
   Width = 680
   Caption = 'Points View'
-  ClientHeight = 480
+  ClientHeight = 530
   ClientWidth = 680
   Color = clNavy
   Menu = MainMenu
@@ -15,7 +15,7 @@ object MainForm: TMainForm
   object StatusBar: TStatusBar
     Left = 0
     Height = 19
-    Top = 461
+    Top = 511
     Width = 680
     Panels = <>
     ParentColor = False
